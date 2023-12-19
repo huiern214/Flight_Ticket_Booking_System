@@ -5,15 +5,13 @@ import Typography from '@mui/material/Typography';
 import Background from '../../assets/Flight.jpg';
 import { Flight } from '@mui/icons-material';
 import api from '../../api/axiosConfig';
-import { Navigate, useNavigate } from 'react-router-dom';
-// import { useNavigate } from 'react-router-dom';
-// import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { loginFailure, loginSuccess } from '../../redux/user/userActions';
 
 
 function Copyright(props) {
-  // const dispatch = useDispatch();
-  // const error_message = useSelector(state => state.user.error);
 
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -21,9 +19,6 @@ function Copyright(props) {
       <Link color="inherit" href="/">
         FlyEase
       </Link>{' '}
-      {/* <Typography color="inherit" variant="body2" component="span">
-        FlyEase
-      </Typography>{' '} */}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -31,10 +26,12 @@ function Copyright(props) {
 }
 
 export default function SignInSide() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     // TEMPORARY
-    navigate(`/`, { replace: true }); // Redirect to the home page
+    // navigate(`/`, { replace: true }); // Redirect to the home page
       
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -43,25 +40,25 @@ export default function SignInSide() {
       password: data.get('password'),
     });
     try {
-      const response = await api.post('/users/login', {
+      const response = await api.post('/user/login', {
         email: data.get('email'),
         password: data.get('password'),
       });
       
       if (response.status === 200) {
-        const userId = response.data; // Assuming the response contains the user ID
-        navigate('/', { replace: true }); // Redirect to the home page
-        // dispatch(loginSuccess(userId)); // Dispatch the login action with the user ID
-        // if (userId < 0) {
-        //   navigate(`/user_management`, { replace: true }); // Redirect to the user's stocks page
-        // } else { 
-        //   navigate(`/stocks`, { replace: true }); // Redirect to the user's stocks page
-        // }
+        const userPermission = response.data; // Assuming the response contains the user ID
+        dispatch(loginSuccess(userPermission.userId, userPermission.permission)); // Dispatch the login action with the user ID
+        toast.success('Successfully logged in');
+        if (userPermission.permission === 'admin') {
+          navigate(`/flight_management`, { replace: true }); // Redirect to the flight_management page
+        } else { 
+          navigate(`/`, { replace: true }); // Redirect to the home page
+        }
       }
     } catch (error) {
       console.log(error);
-      // dispatch(loginFailure("Incorrect login credentials"));
-      // setShowError(true);
+      dispatch(loginFailure("Incorrect login credentials"));
+      toast.error('Incorrect login credentials');
     }
   };
 

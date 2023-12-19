@@ -9,8 +9,21 @@ import Footer from './components/Footer/Footer';
 import NotFound404 from './components/Not Found 404/NotFound404';
 import Flights from './components/Flights/Flights';
 import Checkout from './components/Checkout/Checkout';
+import Profile from './components/Profile/Profile';
+// import { useSelector } from 'react-redux';
+// import { Navigate } from 'react-router';
 
 function App() {
+
+  // const permission = useSelector((state) => state.user.permission);
+
+  // const renderRestrictedRoute = (component, path) => {
+  //   if (permission === 'admin') {
+  //     return <Route path={path} element={component} />;
+  //   }
+  //   return <Navigate to="/" replace />;
+  // };
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -23,10 +36,12 @@ function App() {
             <Route path="/flights" element={<Flights />} />
             <Route path="/checkout/:flightId" element={<Checkout />}></Route>
             <Route path="/orders" element={<Orders />} />
-            <Route path="/profile" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
             {/* 404 Not Found */}
             <Route path="*" element={<NotFound404 />} />
           </Route>
+
+          {/* {renderRestrictedRoute(<FlightManagement />, '/flight_management')} */}
         </Routes>
         <Footer />
       </BrowserRouter>

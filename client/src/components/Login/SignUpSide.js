@@ -33,29 +33,27 @@ export default function SignUpSide() {
     });
   
     try {
-      const response = await api.post('/users/register', {
+      const response = await api.post('/user/register', {
         firstName: data.get('firstName'),
         lastName: data.get('lastName'),
         email: data.get('email'),
         password: data.get('password'),
       });
       
-      // if (response.status === 200) {
-      //   // setShowModal(true); // Show modal on successful sign-up
-      //   toast.success('Successfully registered user');
-      // }
+      if (response.status === 200) {
+        toast.success('Successfully registered user');
+      }
     } catch (error) {
-    //   // console.log(error);
-    //   if (error.response.status === 400) {
-    //     // Duplicate email error
-    //     toast.error('Email already exists');
-    //   } else {
-    //     // Other error
-    //     toast.error('Failed to register user');
-    //   }
+      console.log(error);
+      if (error.response.status === 400) {
+        // Duplicate email error
+        toast.error('Email already exists');
+      } else {
+        // Other error
+        toast.error('Failed to register user');
+      }
     }
   };
-
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>

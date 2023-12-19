@@ -34,7 +34,7 @@ function Home() {
       </Typography>
 
       <Grid
-        container
+        item
         xs={8}
         sm={8}
         md={6}
@@ -128,7 +128,6 @@ function Support() {
           <Grid container alignItems="center" 
           direction="column"
           justify="center"
-          xs={12} sm={12} md={12}
           >
             <Typography marginTop="3%" variant="overline" sx={{ letterSpacing: '0.8rem', textTransform: 'uppercase', fontSize: '13px', color: 'text.primary', lineHeight: '1.5rem'
             ,'@media (max-width:680px)': {

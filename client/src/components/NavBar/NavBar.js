@@ -13,8 +13,6 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { Flight } from '@mui/icons-material';
 import London from '../../assets/london.jpg';
-import { Link } from 'react-router-dom';
-
 
 const pages = [['Home', '/'], ['Flights', '/flights'], ['Orders', '/orders']];
 const settings = [['Profile', '/profile'], ['Logout', '/signin']];
@@ -91,7 +89,7 @@ function NavBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Button textAlign="center" href={page[1]}>
+                  <Button href={page[1]}>
                     {page[0]}
                   </Button>
                 </MenuItem>
@@ -154,7 +152,7 @@ function NavBar() {
                   component="a"
                   href={setting[1]}
                   key={setting[0]} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting[0]}</Typography>
+                  <Typography>{setting[0]}</Typography>
                 </MenuItem>
               ))}
             </Menu>

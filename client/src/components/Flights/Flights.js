@@ -63,7 +63,6 @@ function Flights() {
               margin: 'auto',
               marginTop: '3%',
               marginBottom: '3%',
-              textAlign: 'center',
               fontSize: '2rem',
               '@media (max-width:680px)': {
               fontSize: '1.5rem',

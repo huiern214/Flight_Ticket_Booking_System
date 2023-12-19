@@ -77,13 +77,15 @@ function Orders () {
 
 
   return (
-    <Grid>
-      <Box
+    <Grid container sx={{height:'100%', backgroundColor: '#F5F5F5'}}>
+      <Box item
+        minWidth={'80%'}
+        maxWidth={'80%'}
         xs={8}
         sm={8}
         md={7}
         margin={'10%'}
-        mb={'3%'}
+        mb={'0%'}
         mt={'5%'}
         sx= {{
             '@media (max-width:680px)': {
@@ -162,7 +164,9 @@ function Orders () {
           </Box>
         </TableContainer>
       </Box>
-      <Box
+      <Box item
+      minWidth={'80%'}
+      maxWidth={'80%'}
       xs={8}
       sm={8}
       md={7}
@@ -174,7 +178,6 @@ function Orders () {
           transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
           border: '1px solid rgb(242, 244, 247)',
           backgroundImage: 'none',
-          // overflow: 'hidden',
           borderRadius: '20px',
         }}>
           <Typography variant="h6" m={'4% 1% 2% 3%'} fontWeight='700' lineHeight={'1.2'} fontSize={'1.0625rem'}>

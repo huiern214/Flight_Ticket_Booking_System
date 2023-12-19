@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/axiosConfig';
-import './Profile.css';
 import { useSelector } from 'react-redux';
 import { Grid } from '@mui/material';
 import Passenger from './Passenger/Passenger';
@@ -34,7 +33,7 @@ function Profile() {
   }
 
   return (
-    <Grid container justifyContent={'center'}>
+    <Grid container justifyContent={'center'} sx={{ backgroundColor: '#F5F5F5' }}>
         <Grid item xs={12} md={7} m={"2%"}>
             <Card>
                 <Box pt={3} px={2}>

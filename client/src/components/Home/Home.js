@@ -83,7 +83,6 @@ function Home() {
         />
       </Grid>
       
-
       <Grid 
       item
       m='auto'
@@ -91,7 +90,6 @@ function Home() {
         <Support />
       </Grid>
     </Grid>
-    
   )
 }
 

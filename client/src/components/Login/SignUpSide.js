@@ -42,6 +42,7 @@ export default function SignUpSide() {
       
       if (response.status === 200) {
         toast.success('Successfully registered user');
+        <Link to = "/signin" />;
       }
     } catch (error) {
       console.log(error);
@@ -52,6 +53,7 @@ export default function SignUpSide() {
         // Other error
         toast.error('Failed to register user');
       }
+      <Link to = "/signup" />;
     }
   };
 

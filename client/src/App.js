@@ -10,6 +10,8 @@ import NotFound404 from './components/Not Found 404/NotFound404';
 import Flights from './components/Flights/Flights';
 import Checkout from './components/Checkout/Checkout';
 import Profile from './components/Profile/Profile';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // import { useSelector } from 'react-redux';
 // import { Navigate } from 'react-router';
 
@@ -27,6 +29,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <ToastContainer />
         <Routes >
           <Route path="/signin" element={<SignInSide />} />
           <Route path="/signup" element={<SignUpSide />} />

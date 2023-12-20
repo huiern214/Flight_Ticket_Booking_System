@@ -73,8 +73,7 @@ function Orders () {
   };
   const handleShowAllClick2 = () => {
     setShowAll2(!showAll2);
-  }
-
+  };
 
   return (
     <Grid container sx={{height:'100%', backgroundColor: '#F5F5F5'}}>

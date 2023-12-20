@@ -12,7 +12,7 @@ CREATE TABLE User (
 );
 
 CREATE TABLE Flight (
-    flight_id INT AUTO_INCREMENT PRIMARY KEY,
+    flight_id INTEGER PRIMARY KEY AUTOINCREMENT,
     flight_date DATE NOT NULL,
     flight_time TIME NOT NULL,
     flight_price DECIMAL(10, 2) DEFAULT 100.00,
@@ -22,7 +22,7 @@ CREATE TABLE Flight (
 );
 
 CREATE TABLE `Order` (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INT,
     flight_id INT,
     order_total_price DECIMAL(10, 2) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE `Order` (
 );
 
 CREATE TABLE Order_Passenger (
-    order_passenger_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_passenger_id INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id INT,
     passenger_id INT,
     CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES `Order`(order_id),
@@ -41,7 +41,7 @@ CREATE TABLE Order_Passenger (
 );
 
 CREATE TABLE Passenger (
-    passenger_id INT AUTO_INCREMENT PRIMARY KEY,
+    passenger_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INT,
     passenger_firstname VARCHAR(255) NOT NULL,
     passenger_lastname VARCHAR(255) NOT NULL,

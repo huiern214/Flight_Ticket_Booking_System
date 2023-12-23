@@ -9,49 +9,76 @@ import { KeyboardArrowRight } from '@mui/icons-material';
 import { useState } from 'react';
 import api from '../../api/axiosConfig';
 import { toast } from 'react-toastify';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-// const userId = useSelector((state) => state.user.userId);
-const userId = 1;
-const today = dayjs();
-const flightsData = [
-  {
-    id: 1,
-    date: '2023-12-20', time: '10:00:00',
-    passengers: 40,
-    totalSeats: 40,
-  },
-  {
-    id: 2,
-    date: '2023-12-25', time: '14:30:00',
-    passengers: 4,
-    totalSeats: 40,
-  },
-  {
-    id: 3,
-    date: '2023-12-25', time: '20:00:00',
-    passengers: 20,
-    totalSeats: 40,
-  },
-  {
-    id: 4,
-    date: '2023-12-31', time: '14:30:00',
-    passengers: 4,
-    totalSeats: 40,
-  },
-];
+
+// const flightsData = [
+//   {
+//     id: 1,
+//     date: '2023-12-20', time: '10:00:00',
+//     passengers: 40,
+//     totalSeats: 40,
+//   },
+//   {
+//     id: 2,
+//     date: '2023-12-25', time: '14:30:00',
+//     passengers: 4,
+//     totalSeats: 40,
+//   },
+//   {
+//     id: 3,
+//     date: '2023-12-25', time: '20:00:00',
+//     passengers: 20,
+//     totalSeats: 40,
+//   },
+//   {
+//     id: 4,
+//     date: '2023-12-31', time: '14:30:00',
+//     passengers: 4,
+//     totalSeats: 40,
+//   },
+// ];
 
 function Flights() {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [allFlights, setAllFlights] = useState([]);
+  const userId = useSelector((state) => state.user.userId);
+  // const userId = 1;
+const today = dayjs();
+
+
+  // use get api to get all flights
+  const fetchAllFlights = async() => {
+    try {
+      const response = await api.get(`/flight/getAllFlights`);
+      setAllFlights(response.data);
+      // console.log(allFlights);
+      // console.log("All Flights");
+      // console.log(allFlights);
+    } catch (error) {
+      console.error('Error fetching flight data:', error);
+      toast.error('Error');
+    }      
+  };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
     
+  // useEffect(() => {
+  //   fetchAllFlights(allFlights);
+  //   handleDateChange(today);
+
+  // }, []);
+    
   useEffect(() => {
     handleDateChange(today);
+    fetchAllFlights()
+      .then(() => {
+        console.log('Updated allFlights:', allFlights);
+      });
   }, []);
-    
+  
   return (
     <Grid container>
         <Grid item xs={12}>
@@ -89,7 +116,7 @@ function Flights() {
           </LocalizationProvider>
         </Grid>
         {selectedDate && (
-          <FlightDetails item selectedDate={selectedDate.toISOString().split('T')[0]} />
+          <FlightDetails item selectedDate={selectedDate.toISOString().split('T')[0]} allFlights={allFlights}/>
         )}
     </Grid>
   )
@@ -100,11 +127,11 @@ export default Flights
 function FlightDetails({ selectedDate }) {
 
   const [showAll, setShowAll] = useState(false); // Initialize showAll state
-  // const [filteredFlights, setFilteredFlights] = useState([]); // Initialize showAll state
-  const [lastUpdateTime, setLastUpdateTime] = useState(null); // Initialize showAll state
-
+  const [filteredFlights, setFilteredFlights] = useState([]);
+  // const [lastUpdateTime, setLastUpdateTime] = useState(null);
+  
   // Filter flights based on the selected date
-  const filteredFlights = flightsData.filter((flight) => flight.date === selectedDate);
+  // const filteredFlights = flightsData.filter((flight) => flight.date === selectedDate);
 
   const handleShowAllClick = () => {
     setShowAll(!showAll); // Toggle showAll state
@@ -119,19 +146,25 @@ function FlightDetails({ selectedDate }) {
   }
 
   // USE WHEN API IS READY
-  // // use post api to get flights on selected date
-  // const fetchSelectedDateFlight = async(selectedDate) => {
-  //   try {
-  //     const response = await api.get(`/flights?date=${selectedDate}`);
-  //     setFilteredFlights(response.data);
+  // use post api to get flights on selected date
+  const fetchSelectedDateFlight = async(selectedDate) => {
+    try {
+      const response = await api.get(`/flight/getAllFlightsByDate/${selectedDate}`);
+      setFilteredFlights(response.data);
 
-  //     setLastUpdateTime(response.headers['last-update']);
-  //     console.log(lastUpdateTime);
-  //     setLastUpdateTime(lastUpdateTime);
+      // setLastUpdateTime(response.headers['last-update']);
+      // console.log(lastUpdateTime);
+      // setLastUpdateTime(lastUpdateTime);
 
-  //   } catch (error) {
-  //     console.error('Error fetching stock data:', error);
-  //   }
+    } catch (error) {
+      console.error('Error fetching flight data:', error);
+    }
+  };
+
+  // Function to filter flights based on the flight date
+  // const filterFlightsByDate = (date) => {
+  //   const filteredData = allFlights.filter((flight) => flight.flightDate === date);
+  //   setFilteredFlights(filteredData);
   // };
 
   // // add to waiting list using axios post request
@@ -151,11 +184,11 @@ function FlightDetails({ selectedDate }) {
 
   // const clickWaiting = (flight) => addToWaitingList(flight);
 
-  // useEffect(() => {
-  //   if (selectedDate) {
-  //     fetchSelectedDateFlight(selectedDate);
-  //   }
-  // }, [selectedDate]);
+  useEffect(() => {
+    if (selectedDate) {
+      fetchSelectedDateFlight(selectedDate);
+    }
+  }, [selectedDate]);
   const clickWaiting = () => toast.success('Added successfully.');
 
   return (
@@ -199,6 +232,7 @@ function FlightDetails({ selectedDate }) {
             <TableCell>Flight ID</TableCell>
             <TableCell>Date</TableCell>
             <TableCell>Time</TableCell>
+            <TableCell>Price</TableCell>
             <TableCell>Seats</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
@@ -206,11 +240,12 @@ function FlightDetails({ selectedDate }) {
         {(filteredFlights.length === 0) ? null : 
           <TableBody>
             {(filteredFlights.slice(0, showAll ? filteredFlights.length : 1).map((flight, index) =>
-            <TableRow key={flight.id}>
-              <TableCell>{flight.id}</TableCell>
-              <TableCell>{flight.date}</TableCell>
-              <TableCell>{flight.time}</TableCell>
-              <TableCell>{flight.passengers} / {flight.totalSeats}</TableCell>
+            <TableRow key={flight.flightId}>
+              <TableCell>{flight.flightId}</TableCell>
+              <TableCell>{flight.flightDate}</TableCell>
+              <TableCell>{flight.flightTime}</TableCell>
+              <TableCell>RM {flight.flightPrice}</TableCell>
+              <TableCell>{flight.flightTotalPassengers} / {flight.flightTotalSeats}</TableCell>
               <TableCell>
                 {/* get status different button */}
                 {getStatus(flight) === 'Book' ? (

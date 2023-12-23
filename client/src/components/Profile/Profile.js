@@ -16,7 +16,13 @@ function Profile() {
   const fetchUserProfile = async (userId) => {
     try {
       if (userId === null) {
-        return <div>Loading profile...</div>;
+        return (
+          <Grid container justifyContent={"center"} alignItems={"center"}>
+              <Typography item m={'10%'} variant="h5" color="primary" align="center">
+                Please login to view your profile
+              </Typography>
+          </Grid>
+        );
       }
       const response = await api.get(`/user/${userId}`);
       if (response.status === 200) {
@@ -29,7 +35,13 @@ function Profile() {
   };
 
   if (!profileData) {
-    return <div>Loading profile...</div>;
+    return (
+      <Grid container justifyContent={"center"} alignItems={"center"}>
+        <Typography item m={'10%'} variant="h5" color="primary" align="center">
+          Loading profile...
+        </Typography>
+      </Grid>
+    );
   }
 
   return (
@@ -69,9 +81,9 @@ function Profile() {
                 </Box>
             </Card>
         </Grid>
-        <Grid item xs={12} md={7} mb={"2%"}>
+        {/* <Grid item xs={12} md={7} mb={"2%"}>
             <Passenger />
-        </Grid>
+        </Grid> */}
     </Grid>
   );
 }

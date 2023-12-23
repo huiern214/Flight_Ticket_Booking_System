@@ -13,6 +13,8 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { Flight } from '@mui/icons-material';
 import London from '../../assets/london.jpg';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../redux/user/userActions';
 
 const pages = [['Home', '/'], ['Flights', '/flights'], ['Orders', '/orders']];
 const settings = [['Profile', '/profile'], ['Logout', '/signin']];
@@ -20,6 +22,8 @@ const settings = [['Profile', '/profile'], ['Logout', '/signin']];
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const dispatch = useDispatch();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -32,8 +36,11 @@ function NavBar() {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = async (input) => {
     setAnchorElUser(null);
+    if (input === 'Logout') {
+      dispatch(logout());
+    }
   };
 
   return (
@@ -151,7 +158,7 @@ function NavBar() {
                 <MenuItem 
                   component="a"
                   href={setting[1]}
-                  key={setting[0]} onClick={handleCloseUserMenu}>
+                  key={setting[0]} onClick={() => handleCloseUserMenu(setting[0])}>
                   <Typography>{setting[0]}</Typography>
                 </MenuItem>
               ))}

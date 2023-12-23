@@ -25,6 +25,7 @@ CREATE TABLE `Order` (
     order_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INT,
     flight_id INT,
+    order_total_passenger INT,
     order_total_price DECIMAL(10, 2) NOT NULL,
     order_payment_method VARCHAR(255) NOT NULL,
     order_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -43,6 +44,7 @@ CREATE TABLE Order_Passenger (
 CREATE TABLE Passenger (
     passenger_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INT,
+    flight_id INT,
     passenger_firstname VARCHAR(255) NOT NULL,
     passenger_lastname VARCHAR(255) NOT NULL,
     passenger_dob DATE NOT NULL,
@@ -50,4 +52,5 @@ CREATE TABLE Passenger (
     passenger_email VARCHAR(255) NOT NULL,
     passenger_phone_no VARCHAR(20) NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES User(user_id)
+    CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES Flight(flight_id)
 );

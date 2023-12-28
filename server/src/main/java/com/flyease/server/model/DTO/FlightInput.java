@@ -1,11 +1,11 @@
 package com.flyease.server.model.DTO;
 
 public class FlightInput {
-    String flightDate;
-    String flightTime;
-    double flightPrice;
-    int flightTotalSeats;
-    int flightTotalPassengers;
+    private String flightDate;
+    private String flightTime;
+    private double flightPrice;
+    private int flightTotalSeats;
+    private int flightTotalPassengers;
 
     public FlightInput(String flightDate, String flightTime, double flightPrice, int flightTotalSeats) {
         this.flightDate = flightDate;

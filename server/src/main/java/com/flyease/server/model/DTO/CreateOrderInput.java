@@ -3,8 +3,8 @@ package com.flyease.server.model.DTO;
 import java.util.List;
 
 public class CreateOrderInput {
-    OrderInput order;
-    List<PassengerInput> passengers;
+    private OrderInput order;
+    private List<PassengerInput> passengers;
 
     public CreateOrderInput(OrderInput order, List<PassengerInput> passengers) {
         this.order = order;

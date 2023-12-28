@@ -4,12 +4,12 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class Flight {
-    int flightId;
-    Date flightDate;
-    Time flightTime;
-    double flightPrice;
-    int flightTotalSeats;
-    int flightTotalPassengers;
+    private int flightId;
+    private Date flightDate;
+    private Time flightTime;
+    private double flightPrice;
+    private int flightTotalSeats;
+    private int flightTotalPassengers;
 
     public Flight() {
         this.flightId = -1;

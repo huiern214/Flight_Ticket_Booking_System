@@ -3,13 +3,13 @@ package com.flyease.server.model;
 import java.sql.Timestamp;
 
 public class Order {
-    int orderId;
-    int userId;
-    int flightId;
-    double orderTotalPrice;
-    String orderPaymentMethod;
-    Timestamp orderTimestamp;
-    int ordertotalPassengers;
+    private int orderId;
+    private int userId;
+    private int flightId;
+    private double orderTotalPrice;
+    private String orderPaymentMethod;
+    private Timestamp orderTimestamp;
+    private int ordertotalPassengers;
 
     public Order() {
         this.orderId = -1;

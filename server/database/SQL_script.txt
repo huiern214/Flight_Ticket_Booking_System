@@ -54,3 +54,14 @@ CREATE TABLE Passenger (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES User(user_id)
     CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES Flight(flight_id)
 );
+
+CREATE TABLE WaitingList (
+    waiting_list_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    flight_id INT,
+    passenger_id INT,
+    status VARCHAR(10) DEFAULT 'waiting',
+    date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES Flight(flight_id),
+    CONSTRAINT fk_passenger FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id)
+);
+

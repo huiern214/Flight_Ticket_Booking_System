@@ -134,7 +134,7 @@ function Checkout() {
                         <Typography variant="caption" fontWeight="bold" color="rgb(123, 128, 154)">
                             Name:&nbsp;&nbsp;&nbsp;
                             <Typography variant="caption" fontWeight="normal" color={"black"}>
-                                {flightInfo.flightDate}
+                                {flightInfo.flightDepartureDate}
                             </Typography>
                         </Typography>
                     </Box>
@@ -142,7 +142,7 @@ function Checkout() {
                         <Typography variant="caption" fontWeight="bold" color="rgb(123, 128, 154)">
                             Departure Time:&nbsp;&nbsp;&nbsp;
                             <Typography variant="caption" fontWeight="normal" color={"black"}>
-                                {flightInfo.flightTime}
+                                {flightInfo.flightDepartureTime}
                             </Typography>
                         </Typography>    
                     </Box>               

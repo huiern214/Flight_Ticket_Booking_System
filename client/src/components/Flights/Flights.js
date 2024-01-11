@@ -11,34 +11,6 @@ import api from '../../api/axiosConfig';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 
-
-// const flightsData = [
-//   {
-//     id: 1,
-//     date: '2023-12-20', time: '10:00:00',
-//     passengers: 40,
-//     totalSeats: 40,
-//   },
-//   {
-//     id: 2,
-//     date: '2023-12-25', time: '14:30:00',
-//     passengers: 4,
-//     totalSeats: 40,
-//   },
-//   {
-//     id: 3,
-//     date: '2023-12-25', time: '20:00:00',
-//     passengers: 20,
-//     totalSeats: 40,
-//   },
-//   {
-//     id: 4,
-//     date: '2023-12-31', time: '14:30:00',
-//     passengers: 4,
-//     totalSeats: 40,
-//   },
-// ];
-
 function Flights() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [allFlights, setAllFlights] = useState([]);
@@ -52,9 +24,6 @@ const today = dayjs();
     try {
       const response = await api.get(`/flight/getAllFlights`);
       setAllFlights(response.data);
-      // console.log(allFlights);
-      // console.log("All Flights");
-      // console.log(allFlights);
     } catch (error) {
       console.error('Error fetching flight data:', error);
       toast.error('Error');
@@ -64,12 +33,6 @@ const today = dayjs();
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
-    
-  // useEffect(() => {
-  //   fetchAllFlights(allFlights);
-  //   handleDateChange(today);
-
-  // }, []);
     
   useEffect(() => {
     handleDateChange(today);
@@ -128,10 +91,6 @@ function FlightDetails({ selectedDate }) {
 
   const [showAll, setShowAll] = useState(false); // Initialize showAll state
   const [filteredFlights, setFilteredFlights] = useState([]);
-  // const [lastUpdateTime, setLastUpdateTime] = useState(null);
-  
-  // Filter flights based on the selected date
-  // const filteredFlights = flightsData.filter((flight) => flight.date === selectedDate);
 
   const handleShowAllClick = () => {
     setShowAll(!showAll); // Toggle showAll state
@@ -145,7 +104,6 @@ function FlightDetails({ selectedDate }) {
     }
   }
 
-  // USE WHEN API IS READY
   // use post api to get flights on selected date
   const fetchSelectedDateFlight = async(selectedDate) => {
     try {
@@ -250,7 +208,7 @@ function FlightDetails({ selectedDate }) {
               <TableCell>
                 {/* get status different button */}
                 {getStatus(flight) === 'Book' ? (
-                  <Button href={`/checkout/${flight.id}`}>
+                  <Button href={`/checkout/${flight.flightId}`}>
                     <span className='css-wu11c1'>
                       Book
                     </span>

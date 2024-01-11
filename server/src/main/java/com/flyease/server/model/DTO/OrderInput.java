@@ -1,11 +1,11 @@
 package com.flyease.server.model.DTO;
 
 public class OrderInput {
-    int userId;
-    int flightId;
-    double orderTotalPrice;
-    String orderPaymentMethod;
-    int orderTotalPassengers;
+    private int userId;
+    private int flightId;
+    private double orderTotalPrice;
+    private String orderPaymentMethod;
+    private int orderTotalPassengers;
 
     public OrderInput(int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, int orderTotalPassengers) {
         this.userId = userId;

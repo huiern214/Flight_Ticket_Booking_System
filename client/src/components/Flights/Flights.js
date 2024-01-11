@@ -107,7 +107,8 @@ function FlightDetails({ selectedDate }) {
   // use post api to get flights on selected date
   const fetchSelectedDateFlight = async(selectedDate) => {
     try {
-      const response = await api.get(`/flight/getAllFlightsByDate/${selectedDate}`);
+      //TODO: change selectedDate to Date1 and Date2?
+      const response = await api.get(`/flight/getAllFlightsByDate/${selectedDate}`); 
       setFilteredFlights(response.data);
 
       // setLastUpdateTime(response.headers['last-update']);
@@ -118,6 +119,29 @@ function FlightDetails({ selectedDate }) {
       console.error('Error fetching flight data:', error);
     }
   };
+
+  // Function to filter flights based on the flight date
+  // const filterFlightsByDate = (date) => {
+  //   const filteredData = allFlights.filter((flight) => flight.flightDepartureDate === date);
+  //   setFilteredFlights(filteredData);
+  // };
+
+  // // add to waiting list using axios post request
+  // const addToWaitingList = async (flight) => {
+  //   try {
+  //     await api.post('/waiting-list', {
+  //       flightId: flight.id,
+  //       userId: userId,
+  //     });
+  //     console.log('Added to waiting list');
+  //     toast.success('Added successfully.');
+  //   } catch (error) {
+  //     console.error('Error fetching stock data:', error);
+  //     toast.error('Error');
+  //   }
+  // } 
+
+  // const clickWaiting = (flight) => addToWaitingList(flight);
 
   useEffect(() => {
     if (selectedDate) {
@@ -177,8 +201,8 @@ function FlightDetails({ selectedDate }) {
             {(filteredFlights.slice(0, showAll ? filteredFlights.length : 1).map((flight, index) =>
             <TableRow key={flight.flightId}>
               <TableCell>{flight.flightId}</TableCell>
-              <TableCell>{flight.flightDate}</TableCell>
-              <TableCell>{flight.flightTime}</TableCell>
+              <TableCell>{flight.flightDepartureDate}</TableCell>
+              <TableCell>{flight.flightDepartureTime}</TableCell>
               <TableCell>RM {flight.flightPrice}</TableCell>
               <TableCell>{flight.flightTotalPassengers} / {flight.flightTotalSeats}</TableCell>
               <TableCell>
@@ -201,7 +225,7 @@ function FlightDetails({ selectedDate }) {
             ))}
         </TableBody>}
       </Table>
-      {(filteredFlights.length === 0) ? <Box m={'5%'}>No flights available  for the selected date.</Box> : 
+      {(filteredFlights.length === 0) ? <Box m={'5%'}>No flights available for the selected date.</Box> : 
       <Box p={'2%'} sx={{display: 'flex', justifyContent: 'flex-end'}}>
         <Button
           fullWidth={true}

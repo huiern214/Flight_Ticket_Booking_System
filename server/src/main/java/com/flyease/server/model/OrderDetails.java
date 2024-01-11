@@ -3,9 +3,9 @@ package com.flyease.server.model;
 import java.util.List;
 
 public class OrderDetails {
-    Order order;
-    Flight flight;
-    List<Passenger> passengers;
+    private Order order;
+    private Flight flight;
+    private List<Passenger> passengers;
 
     public OrderDetails() {
         this.order = new Order();

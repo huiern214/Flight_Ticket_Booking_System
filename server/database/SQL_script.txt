@@ -13,12 +13,17 @@ CREATE TABLE User (
 
 CREATE TABLE Flight (
     flight_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    flight_date DATE NOT NULL,
-    flight_time TIME NOT NULL,
+    flight_depart_date DATE NOT NULL,
+    flight_departure_time TIME NOT NULL,
+    flight_arrival_date DATE NOT NULL,
+    flight_arrival_time TIME NOT NULL,
     flight_price DECIMAL(10, 2) DEFAULT 100.00,
     flight_total_seats INT DEFAULT 50,
     flight_total_passengers INT DEFAULT 0,
+    flight_total_business_seats INT DEFAULT 20,
+    flight_total_business_passengers INT DEFAULT 0,
     CONSTRAINT chk_total_passengers CHECK (flight_total_passengers <= flight_total_seats)
+    CONSTRAINT chk_total_passengers CHECK (flight_total_business_passengers <= flight_total_business_seats)
 );
 
 CREATE TABLE `Order` (

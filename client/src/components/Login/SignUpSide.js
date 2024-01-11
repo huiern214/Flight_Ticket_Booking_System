@@ -6,6 +6,7 @@ import Background from '../../assets/Flight.jpg';
 import { Flight } from '@mui/icons-material';
 import api from '../../api/axiosConfig';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -21,6 +22,7 @@ function Copyright(props) {
 }
 
 export default function SignUpSide() {
+  const navigate = useNavigate();
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +44,8 @@ export default function SignUpSide() {
       
       if (response.status === 200) {
         toast.success('Successfully registered user');
-        <Link to = "/signin" />;
+        // <Link to = "/signin" />;
+        navigate(`/signin`, { replace: true });
       }
     } catch (error) {
       console.log(error);
@@ -53,7 +56,8 @@ export default function SignUpSide() {
         // Other error
         toast.error('Failed to register user');
       }
-      <Link to = "/signup" />;
+      // <Link to = "/signup" />;
+      navigate(`/signup`, { replace: true });
     }
   };
 

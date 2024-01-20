@@ -111,8 +111,8 @@ function FlightDetails({ selectedDate }) {
   };
 
   function getStatus(flight) {    
-    if (flight.passengers >= flight.totalSeats) {
-      return 'Add to Waiting List';
+    if (flight.flightTotalPassengers >= flight.flightTotalSeats) {
+      return 'Waiting List';
     } else {
       return 'Book';
     }
@@ -151,29 +151,6 @@ function FlightDetails({ selectedDate }) {
     }      
   };
 
-  // Function to filter flights based on the flight date
-  // const filterFlightsByDate = (date) => {
-  //   const filteredData = allFlights.filter((flight) => flight.flightDepartureDate === date);
-  //   setFilteredFlights(filteredData);
-  // };
-
-  // // add to waiting list using axios post request
-  // const addToWaitingList = async (flight) => {
-  //   try {
-  //     await api.post('/waiting-list', {
-  //       flightId: flight.id,
-  //       userId: userId,
-  //     });
-  //     console.log('Added to waiting list');
-  //     toast.success('Added successfully.');
-  //   } catch (error) {
-  //     console.error('Error fetching stock data:', error);
-  //     toast.error('Error');
-  //   }
-  // } 
-
-  // const clickWaiting = (flight) => addToWaitingList(flight);
-
   useEffect(() => {
     if (selectedDate) {
       fetchSelectedDateFlight(selectedDate);
@@ -190,7 +167,7 @@ function FlightDetails({ selectedDate }) {
     sm={8}
     md={6}
     // xs={12} sm={12} md={12}
-    margin={'10%'}
+    margin={'5%'}
     mb={'3%'}
     mt={'2%'}
     sx= {{
@@ -293,7 +270,7 @@ function FlightDetails({ selectedDate }) {
                 ) : (
                   <Button href={`/addToWaitingList/${flight.flightId}`}>
                     <span className='css-rpg9ag'>
-                      Add to Waiting List
+                      Waiting List
                     </span>
                   </Button>
                 )}

@@ -120,7 +120,19 @@ function OrderDetails() {
                                     <Typography variant="caption" fontWeight="bold" color="rgb(123, 128, 154)">
                                         Order Timestamp:&nbsp;&nbsp;&nbsp;
                                         <Typography variant="caption" fontWeight="normal" color={"black"}>
-                                            {orderDetails.order.orderTimestamp}
+                                            {new Date(orderDetails.order.orderTimestamp)
+                                                .toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: 'numeric',
+                                                    minute: 'numeric',
+                                                    second: 'numeric',
+                                                    hour12: false,
+                                                })}
+                                            {}
+ 
+                                            
                                         </Typography>
                                     </Typography>    
                                 </Box>   

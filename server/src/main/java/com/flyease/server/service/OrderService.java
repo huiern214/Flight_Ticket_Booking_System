@@ -42,14 +42,19 @@ public class OrderService {
             return false;
         }
         // 2. add order to the Order table
-        String query = "INSERT INTO `Order` (user_id, flight_id, order_total_price, order_payment_method, passenger_id) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO `Order` (user_id, flight_id, order_total_price, order_payment_method, order_timestamp, passenger_id) VALUES (?, ?, ?, ?, ?, ?)";
+
+        // get the current timestamp in Malaysia Time Zone
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
             statement.setInt(1, createOrderInput.getUserId());
             statement.setInt(2, createOrderInput.getFlightId());
             statement.setDouble(3, createOrderInput.getOrderTotalPrice());
             statement.setString(4, createOrderInput.getOrderPaymentMethod());
-            statement.setInt(5, passengerId);
+            statement.setTimestamp(5, timestamp);
+            statement.setInt(6, passengerId);
+
             statement.executeUpdate();
             
             // 3. update flight_total_passengers in Flight table

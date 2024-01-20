@@ -10,7 +10,7 @@ import { useState } from 'react';
 import api from '../../api/axiosConfig';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { MenuItem, Select, FormControl, InputLabel, TextField } from '@mui/material';
+import { MenuItem, FormControl, TextField } from '@mui/material';
 import { format, startOfWeek, endOfWeek, addWeeks } from 'date-fns'
 
 function Flights() {
@@ -62,7 +62,7 @@ function Flights() {
           </LocalizationProvider>
         </Grid>
         {selectedDate && (
-          <FlightDetails item selectedDate={selectedDate.toISOString().split('T')[0]}/>
+          <FlightDetails item selectedDate={selectedDate.format('YYYY-MM-DD')}/>
         )}
     </Grid>
   )
@@ -121,15 +121,9 @@ function FlightDetails({ selectedDate }) {
   // use post api to get flights on selected date
   const fetchSelectedDateFlight = async(selectedDate) => {
     try {
-      //TODO: change selectedDate to Date1 and Date2?
       const response = await api.get(`/flight/getAllFlightsByDate/${selectedDate}`); 
       setFilteredFlights(response.data);
       setCondition("date");
-
-      // setLastUpdateTime(response.headers['last-update']);
-      // console.log(lastUpdateTime);
-      // setLastUpdateTime(lastUpdateTime);
-
     } catch (error) {
       console.error('Error fetching flight data:', error);
     }

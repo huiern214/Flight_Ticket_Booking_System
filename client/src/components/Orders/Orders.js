@@ -19,22 +19,6 @@ import { KeyboardArrowRight } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import api from '../../api/axiosConfig';
 
-// const bookingsData = [
-//   {
-//     order_id: 1,
-//     flight_id: 1,
-//     date: '2023-12-20', time: '10:00:00',
-//     passengers: 2,
-//   },
-//   {
-//     order_id: 2,
-//     flight_id: 2,
-//     date: '2023-12-15', time: '14:30:00',
-//     passengers: 4,
-//   },
-//   // Add more booking data objects as needed
-// ];
-
 const waitingListData = [
   {
     id: 1,
@@ -157,7 +141,7 @@ function Orders () {
                   </TableCell>
                   <TableCell>{booking.passenger.passengerFirstName}</TableCell>
                   <TableCell>
-                  <Link href={`/orders/${booking.id}`}>Details</Link>
+                  <Link href={`/orders/${booking.order.orderId}`}>Details</Link>
                   </TableCell>
               </TableRow>
               ))}

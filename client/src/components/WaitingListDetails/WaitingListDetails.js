@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Passenger from './Passenger/Passenger';
 import { toast } from 'react-toastify';
 
-function OrderDetails() {
+function WaitingListDetails() {
   const [order, setOrder] = useState([]);
   const userId = useSelector((state) => state.user.userId);
   const params = useParams();
@@ -17,10 +17,10 @@ function OrderDetails() {
 
   const deleteOrder = async () => {
     try {
-        const response = await api.delete(`/order/deleteOrder/${orderId}`);
+        const response = await api.delete(`/order/deleteWaitingList/${orderId}`);
         if (response.status === 200) {
             console.log(response);
-            toast.success('Cancel Order Successfully!');
+            toast.success('Remove from Waiting List Successfully!');
             navigate(`/orders`, { replace: true });
         }
     } catch (error) {
@@ -34,7 +34,7 @@ function OrderDetails() {
           return (
             <Grid container justifyContent={"center"} alignItems={"center"}>
                 <Typography item m={'10%'} variant="h5" color="primary" align="center">
-                  Please login to view your order
+                  Please login to view your waiting list details
                 </Typography>
             </Grid>
           );
@@ -61,7 +61,7 @@ function OrderDetails() {
         {(order.length === 0) ? (
             <Grid container justifyContent={"center"} alignItems={"center"} key={orderId}>
                 <Typography item m={'10%'} variant="h5" color="primary" align="center">
-                    Loading order...
+                    Loading waiting list...
                 </Typography>
             </Grid>
         ) : (
@@ -72,7 +72,7 @@ function OrderDetails() {
                         <Card>
                             <Box pt={3} px={2}>
                                 <Typography variant="h6" fontWeight="bold">
-                                Order Information
+                                Waiting List Information
                                 </Typography>
                             </Box>
                             <Box pt={1} pb={2} px={2} display={'flex'} flexDirection={'column'}>
@@ -159,7 +159,7 @@ function OrderDetails() {
                             },
                         }}
                         onClick={deleteOrder}
-                    >Cancel Order</Button>
+                    >Remove from Waiting List</Button>
                 </Grid>
                 ))}
             </Grid>
@@ -167,4 +167,4 @@ function OrderDetails() {
     </Grid>
   );
 }
-export default OrderDetails;
+export default WaitingListDetails;

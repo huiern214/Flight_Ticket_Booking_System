@@ -31,6 +31,7 @@ CREATE TABLE `Order` (
     order_total_price DECIMAL(10, 2) NOT NULL,
     order_payment_method VARCHAR(255) NOT NULL,
     order_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    order_status VARCHAR(255) DEFAULT 'confirmed',
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES User(user_id),
     CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES Flight(flight_id),
     CONSTRAINT fk_passenger FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id)

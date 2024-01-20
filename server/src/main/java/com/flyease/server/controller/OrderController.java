@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flyease.server.model.OrderDetails;
+import com.flyease.server.model.WaitingListQueue;
 import com.flyease.server.model.DTO.CreateOrderInput;
 import com.flyease.server.service.OrderService;
 
@@ -34,7 +35,6 @@ public class OrderController {
     // http://localhost:8080/order/createOrder
     @PostMapping("/createOrder")
     public ResponseEntity<String> createOrder(@RequestBody CreateOrderInput input) throws SQLException {
-        System.out.println(input);
         boolean add_success = orderService.addOrder(input);
         
         if (add_success) {
@@ -56,6 +56,18 @@ public class OrderController {
     //     "passengerEmail": "johndoe@gmail",
     //     "passengerPhoneNo": "1234567890"
     // }
+
+    // http://localhost:8080/order/createWaitingList
+    @PostMapping("/createWaitingList")
+    public ResponseEntity<String> createWaitingList(@RequestBody CreateOrderInput input) throws SQLException {
+        boolean add_success = orderService.addWaitingList(input);
+        
+        if (add_success) {
+            return ResponseEntity.ok("Waiting List created successfully");        
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create order");
+        }
+    }
       
     // http://localhost:8080/order/deleteOrder/{order_id}
     @DeleteMapping("/deleteOrder/{order_id}")
@@ -63,6 +75,17 @@ public class OrderController {
         boolean delete_success = orderService.deleteOrder(order_id);
         if (delete_success) {
             return ResponseEntity.ok("Order deleted successfully");        
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete order");
+        }
+    }
+
+    // http://localhost:8080/order/deleteWaitingList/{order_id}
+    @DeleteMapping("/deleteWaitingList/{order_id}")
+    public ResponseEntity<String> deleteWaitingList(@PathVariable int order_id) throws SQLException {
+        boolean delete_success = orderService.deleteWaitingList(order_id);
+        if (delete_success) {
+            return ResponseEntity.ok("Waiting List deleted successfully");        
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete order");
         }
@@ -89,4 +112,87 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    // Sample output:
+    // [
+    //     {
+    //         "order": {
+    //             "orderId": 2,
+    //             "userId": 1,
+    //             "flightId": 1,
+    //             "orderTotalPrice": 100.0,
+    //             "orderPaymentMethod": "FPX",
+    //             "orderTimestamp": "2024-01-20T01:07:09.000+00:00",
+    //             "passengerId": 2,
+    //             "status": "confirmed"
+    //         },
+    //         "flight": {
+    //             "flightId": 1,
+    //             "flightDepartureDate": "2024-01-25",
+    //             "flightDepartureTime": "12:00:00",
+    //             "flightArrivalDate": "2024-01-25",
+    //             "flightArrivalTime": "12:00:00",
+    //             "flightPrice": 100.0,
+    //             "flightTotalSeats": 50,
+    //             "flightTotalPassengers": 4
+    //         },
+    //         "passenger": {
+    //             "passengerId": 2,
+    //             "passengerFirstName": "John",
+    //             "passengerLastName": "Doe",
+    //             "passengerPassportNo": "123456",
+    //             "passengerGender": "male",
+    //             "passengerEmail": "johndoe@gmail",
+    //             "passengerPhoneNo": "1234567890"
+    //         }
+    //     }
+    // ]
+
+    // http://localhost:8080/order/getAllWaitingListsByUserId/{user_id}
+    @GetMapping("/getAllWaitingListsByUserId/{user_id}")
+    public ResponseEntity<WaitingListQueue<OrderDetails>> getAllWaitingListsByUserId(@PathVariable int user_id) throws SQLException {
+        WaitingListQueue<OrderDetails> orders = orderService.getAllWaitingListsByUserId(user_id);
+        if (orders != null) {
+            return ResponseEntity.ok(orders);        
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    // Sample output:
+    // {
+    //     "queue": [
+    //         {
+    //             "order": {
+    //                 "orderId": 7,
+    //                 "userId": 2,
+    //                 "flightId": 1,
+    //                 "orderTotalPrice": 100.0,
+    //                 "orderPaymentMethod": "FPX",
+    //                 "orderTimestamp": "2024-01-20T17:49:27.930+00:00",
+    //                 "passengerId": 7,
+    //                 "status": "confirmed"
+    //             },
+    //             "flight": {
+    //                 "flightId": 1,
+    //                 "flightDepartureDate": "2024-01-25",
+    //                 "flightDepartureTime": "12:00:00",
+    //                 "flightArrivalDate": "2024-01-25",
+    //                 "flightArrivalTime": "12:00:00",
+    //                 "flightPrice": 100.0,
+    //                 "flightTotalSeats": 50,
+    //                 "flightTotalPassengers": 4
+    //             },
+    //             "passenger": {
+    //                 "passengerId": 7,
+    //                 "passengerFirstName": "John",
+    //                 "passengerLastName": "Doe",
+    //                 "passengerPassportNo": "123456",
+    //                 "passengerGender": "male",
+    //                 "passengerEmail": "johndoe@gmail",
+    //                 "passengerPhoneNo": "1234567890"
+    //             }
+    //         }
+    //     ],
+    //     "empty": false
+    // }
+
 }

@@ -13,6 +13,8 @@ import Profile from './components/Profile/Profile';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import OrderDetails from './components/OrderDetails/OrderDetails';
+import AddToWaitingList from './components/AddToWaitingList/AddToWaitingList';
+import WaitingListDetails from './components/WaitingListDetails/WaitingListDetails';
 // import { useSelector } from 'react-redux';
 // import { Navigate } from 'react-router';
 
@@ -39,8 +41,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/flights" element={<Flights />} />
             <Route path="/checkout/:flightId" element={<Checkout />}></Route>
+            <Route path="/addToWaitingList/:flightId" element={<AddToWaitingList />}></Route>
             <Route path="/orders" element={<Orders />} />
             <Route path="/orders/:orderId" element={<OrderDetails />} />
+            <Route path="/waitingList/:orderId" element={<WaitingListDetails />} />
             <Route path="/profile" element={<Profile />} />
             {/* 404 Not Found */}
             <Route path="*" element={<NotFound404 />} />

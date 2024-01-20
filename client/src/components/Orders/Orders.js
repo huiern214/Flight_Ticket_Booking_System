@@ -19,23 +19,6 @@ import { KeyboardArrowRight } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import api from '../../api/axiosConfig';
 
-const waitingListData = [
-  {
-    id: 1,
-    date: '2023-12-05',
-    time: '09:15 AM',
-    passengers: 40,
-    totalSeats: 40,
-  },
-  {
-    id: 2,
-    date: '2023-12-07',
-    time: '11:45 AM',
-    passengers: 39,
-    totalSeats: 40,
-  },
-  // Add more waiting list data objects as needed
-];
 
 function Orders () {
   const [showAll, setShowAll] = useState(false); // Initialize showAll state
@@ -43,6 +26,7 @@ function Orders () {
   const currentDateTime = new Date(); // Get the current date and time
   const userId = useSelector((state) => state.user.userId);
   const [orders, setOrders] = useState([]);
+  const [waitingList, setWaitingList] = useState([]);
 
   function getStatus(booking) {
     const bookingDateTime = new Date(`${booking.flight.flightDepartureDate}T${booking.flight.flightDepartureTime}`);
@@ -51,6 +35,16 @@ function Orders () {
       return 'Completed';
     } else {
       return 'Upcoming'; 
+    }
+  }
+
+  function getStatus2(booking) {
+    const bookingDateTime = new Date(`${booking.flight.flightDepartureDate}T${booking.flight.flightDepartureTime}`);
+    
+    if (bookingDateTime < currentDateTime) {
+      return 'Expired';
+    } else {
+      return 'Waiting'; 
     }
   }
 
@@ -64,8 +58,19 @@ function Orders () {
     }
   };
 
+  // Get all waiting list for a user
+  const fetchAllWaitingListForUser = async() => {
+    try {
+      const response = await api.get(`/order/getAllWaitingListsByUserId/${userId}`);
+      setWaitingList(response.data.queue);
+    } catch (error) {
+      console.error('Error fetching waiting list data:', error);
+    }
+  };
+
   useEffect(() => {
     fetchAllOrdersForUser();
+    fetchAllWaitingListForUser();
   }, []);
 
 
@@ -126,6 +131,7 @@ function Orders () {
                 <TableCell>Details</TableCell>
               </TableRow>
             </TableHead>
+            {(orders.length === 0 || orders === null || !Array.isArray(orders)) ? null : 
             <TableBody>
               {(orders.slice(0, showAll ? orders.length : 5).map((booking, index) =>
               <TableRow key={booking.order.orderId}>
@@ -145,8 +151,9 @@ function Orders () {
                   </TableCell>
               </TableRow>
               ))}
-            </TableBody>
+            </TableBody>}
           </Table>
+          {(orders.length === 0 || orders === null || !Array.isArray(orders)) ? <Box m={'3%'}>No orders.</Box> : 
           <Box p={'2%'} sx={{display: 'flex', justifyContent: 'flex-end'}}>
             <Button
               fullWidth={true}
@@ -164,7 +171,7 @@ function Orders () {
               <span>See {showAll ? 'Less' : 'More'}</span>
               <KeyboardArrowRight sx={{ marginLeft: '0.2rem' }} />
             </Button>
-          </Box>
+          </Box>}
         </TableContainer>
       </Box>
       <Box item
@@ -174,7 +181,7 @@ function Orders () {
       sm={8}
       md={7}
       margin={'10%'}
-      marginTop={'5%'}>
+      marginTop={'2%'}>
         <TableContainer component={Paper} style={{
           backgroundColor: 'rgb(255, 255, 255)',
           color: 'rgb(17, 25, 39)',
@@ -194,27 +201,40 @@ function Orders () {
                 color: 'rgb(47, 55, 70)',
                 '& th': {fontWeight: '550'}
               }}>
-                <TableCell>#</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>No. of Passengers</TableCell>
+                <TableCell>Order ID</TableCell>
+                <TableCell>Flight ID</TableCell>
+                <TableCell>Departure</TableCell>
+                <TableCell>Arrival</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Passenger</TableCell>
                 <TableCell>Details</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {(waitingListData.slice(0, showAll2 ? waitingListData.length : 1).map((item, index) => 
-                <TableRow key={item.id}>
-                  <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.date}</TableCell>
-                  <TableCell>{item.time}</TableCell>
-                  <TableCell>{item.passengers} / {item.totalSeats}</TableCell>
-                  <TableCell>
-                    <Link href="#">Details</Link>
-                  </TableCell>
+            {(waitingList.length === 0 || waitingList === null || !Array.isArray(waitingList)) ? null :
+              <TableBody> 
+              {(waitingList.slice(0, showAll ? orders.length : 5).map((waiting, index) =>
+                <TableRow key={waiting.order.orderId}>
+                    <TableCell>{waiting.order.orderId}</TableCell>
+                    <TableCell>{waiting.flight.flightId}</TableCell>
+                    <TableCell>{waiting.flight.flightDepartureDate} {waiting.flight.flightDepartureTime}</TableCell>
+                    <TableCell>{waiting.flight.flightArrivalDate} {waiting.flight.flightArrivalTime}</TableCell>
+                    <TableCell>{waiting.order.orderTotalPrice}</TableCell>
+                    <TableCell>
+                      <span className={getStatus2(waiting) === 'Waiting' ? 'css-wu11c1' : 'css-rpg9ag'}>
+                        {getStatus2(waiting)}
+                      </span>
+                    </TableCell>
+                    <TableCell>{waiting.passenger.passengerFirstName}</TableCell>
+                    <TableCell>
+                    <Link href={`/waitingList/${waiting.order.orderId}`}>Details</Link>
+                    </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
+              </TableBody>
+            }
           </Table>
+          {(waitingList.length === 0 || waitingList === null || !Array.isArray(waitingList)) ? <Box m={'3%'}>No waiting list.</Box> :
           <Box p={'2%'} sx={{display: 'flex', justifyContent: 'flex-end'}}>
             <Button
               fullWidth={true}
@@ -233,6 +253,7 @@ function Orders () {
               <KeyboardArrowRight sx={{ marginLeft: '0.2rem' }} />
             </Button>
           </Box>
+          }
         </TableContainer>
       </Box>
     </Grid>

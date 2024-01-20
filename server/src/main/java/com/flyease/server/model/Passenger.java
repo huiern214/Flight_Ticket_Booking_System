@@ -1,7 +1,5 @@
 package com.flyease.server.model;
 
-import java.sql.Date;
-
 public class Passenger {
     private int passengerId;
     private String passengerFirstName;

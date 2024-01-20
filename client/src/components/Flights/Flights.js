@@ -275,7 +275,7 @@ function FlightDetails({ selectedDate }) {
         </TableHead>
         {(filteredFlights.length === 0) ? null : 
           <TableBody>
-            {(filteredFlights.slice(0, showAll ? filteredFlights.length : 5).map((flight, index) =>
+            {(filteredFlights.slice(0, showAll ? filteredFlights.length : 3).map((flight, index) =>
             <TableRow key={flight.flightId}>
               <TableCell>{flight.flightId}</TableCell>
               <TableCell>{flight.flightDepartureDate} {flight.flightDepartureTime}</TableCell>
@@ -291,7 +291,7 @@ function FlightDetails({ selectedDate }) {
                     </span>
                   </Button>
                 ) : (
-                  <Button onClick={clickWaiting}>
+                  <Button href={`/addToWaitingList/${flight.flightId}`}>
                     <span className='css-rpg9ag'>
                       Add to Waiting List
                     </span>

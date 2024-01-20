@@ -15,6 +15,7 @@ import com.flyease.server.model.Flight;
 import com.flyease.server.model.Order;
 import com.flyease.server.model.OrderDetails;
 import com.flyease.server.model.Passenger;
+import com.flyease.server.model.WaitingListQueue;
 import com.flyease.server.model.DTO.CreateOrderInput;
 
 @Service
@@ -31,7 +32,7 @@ public class OrderService {
     }
 
     // FUNCTIONS TO IMPLEMENT
-    // [1] create order to the database
+    // [1a] create order to the database
     // 1. add passenger to the Passenger table
     // 2. add order to the Order table
     // 3. update flight_total_passengers in Flight table
@@ -66,13 +67,45 @@ public class OrderService {
         }
         return false; // Return false if order ID retrieval fails
     }
-    
-    // [2] delete order based on the order id
+   
+    // [1b] create waiting list to the database
+    public boolean addWaitingList(CreateOrderInput createOrderInput) throws SQLException {
+        // 1. add passenger to the Passenger table
+        int passengerId = passengerService.addPassenger(createOrderInput.getUserId(), createOrderInput.getFlightId(), createOrderInput.getPassengerFirstName(), createOrderInput.getPassengerLastName(), createOrderInput.getPassengerEmail(), createOrderInput.getPassengerPassportNo(), createOrderInput.getPassengerGender(), createOrderInput.getPassengerPhoneNo());
+        if (passengerId == -1) {
+            return false;
+        }
+        // 2. add order to the Order table
+        String query = "INSERT INTO `Order` (user_id, flight_id, order_total_price, order_payment_method, order_timestamp, passenger_id, order_status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        // get the current timestamp in Malaysia Time Zone
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+            statement.setInt(1, createOrderInput.getUserId());
+            statement.setInt(2, createOrderInput.getFlightId());
+            statement.setDouble(3, createOrderInput.getOrderTotalPrice());
+            statement.setString(4, createOrderInput.getOrderPaymentMethod());
+            statement.setTimestamp(5, timestamp);
+            statement.setInt(6, passengerId);
+            statement.setString(7, "waiting");
+
+            statement.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false; // Return false if order ID retrieval fails
+    }
+
+    // [2a] delete order based on the order id
     // 1. get passenger id from Order table using getPassengerIdFromOrder()
     // 2. get flight id from Order table using getFlightIdFromOrder()
     // 3. delete the passenger information based on the passenger id
     // 4. delete order based on the order id in Order table using deleteOrderById()
     // 5. update flight_total_passengers in Flight table using deletePassengersFromFlight()
+    // 6. if there is any waiting list, update the first waiting list's status to confirmed
     public boolean deleteOrder(int orderId) throws SQLException {
         // 1. get passenger id from Order table using getPassengerIdFromOrder()
         int passengerId = getPassengerIdFromOrder(orderId);
@@ -97,9 +130,47 @@ public class OrderService {
         }
 
         // 5. update flight_total_passengers in Flight table using deletePassengersFromFlight()
-        if (!flightService.deductNumPassengersFromFlight(flightId, 1)) {
+        // 6. if there is any waiting list, update the first waiting list's status to confirmed
+        if (flightService.getNumAvailableSeats(flightId) == 0) {
+            int waitingListOrderId = getFirstWaitingListOrderId(flightId);
+            if (waitingListOrderId != -1) {
+                if (!flightService.deductNumPassengersFromFlight(flightId, 1)) {
+                    return false;
+                }
+                return updateOrderStatusToConfirmed(waitingListOrderId);
+            }
+        } else {
+            if (!flightService.deductNumPassengersFromFlight(flightId, 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // [2b] delete waiting list based on the order id
+    public boolean deleteWaitingList(int orderId) throws SQLException {
+        // 1. get passenger id from Order table using getPassengerIdFromOrder()
+        int passengerId = getPassengerIdFromOrder(orderId);
+        if (passengerId == -1) {
             return false;
         }
+
+        // 2. get flight id from Order table using getFlightIdFromOrder()
+        int flightId = getFlightIdFromOrder(orderId);
+        if (flightId == -1) {
+            return false;
+        }
+
+        // 3. delete the passenger information based on the passenger id
+        if (!passengerService.deletePassengerById(passengerId)) {
+            return false;
+        }
+
+        // 4. delete order based on the order id in Order table using deleteOrderById()
+        if (!deleteOrderById(orderId)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -138,12 +209,12 @@ public class OrderService {
         return null;
     }
 
-    // [4] get all the orders' details based on the user id
+    // [4a] get all the orders' details based on the user id
     // 1. get all the orders' id from Order table
     // 2. get all the orders' information based on the order id using getOrderDetails()
     public List<OrderDetails> getAllOrdersByUserId(int userId) throws SQLException {
         List<OrderDetails> orders = new ArrayList<>();
-        String query = "SELECT order_id FROM `Order` WHERE user_id = ?";
+        String query = "SELECT order_id FROM `Order` WHERE user_id = ? AND order_status = 'confirmed'";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, userId);
@@ -161,6 +232,29 @@ public class OrderService {
         }
         return orders;
     }
+
+    // [4b] get all the waiting lists' details based on the user id
+    public WaitingListQueue<OrderDetails> getAllWaitingListsByUserId(int userId) throws SQLException {
+        WaitingListQueue<OrderDetails> orders = new WaitingListQueue<>();
+        String query = "SELECT order_id FROM `Order` WHERE user_id = ? AND order_status = 'waiting'";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int orderId = resultSet.getInt("order_id");
+                OrderDetails orderDetails = getOrderDetails(orderId);
+                if (orderDetails != null) {
+                    orders.enqueue(orderDetails);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return orders;
+    }
+
 
     // HELPER FUNCTIONS
     // [1] get flight id from Order table
@@ -210,4 +304,56 @@ public class OrderService {
         }
         return false;
     }
+
+    // [4] get the first waiting list's order id from Order table based on the flight id
+    // implement WaitingListQueue<OrderDetails> in OrderService.java, peek()
+    public int getFirstWaitingListOrderId(int flightId) {
+        String query = "SELECT order_id FROM `Order` WHERE flight_id = ? AND order_status = 'waiting' ORDER BY order_timestamp ASC";
+        WaitingListQueue<OrderDetails> waitingList = new WaitingListQueue<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, flightId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int orderId = resultSet.getInt("order_id");
+                OrderDetails orderDetails = getOrderDetails(orderId);
+                if (orderDetails != null) {
+                    waitingList.enqueue(orderDetails);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        if (waitingList.peek() != null) {
+            return waitingList.peek().getOrder().getOrderId();
+        }
+        return -1;
+    }
+
+    // [5] update order status to confirmed
+    // 1. update order status to confirmed in Order table
+    // 2. update flight_total_passengers in Flight table
+    public boolean updateOrderStatusToConfirmed(int orderId) throws SQLException {
+        // 1. update order status to confirmed in Order table
+        String query = "UPDATE `Order` SET order_status = 'confirmed' WHERE order_id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, orderId);
+            statement.executeUpdate();
+
+            // 2. update flight_total_passengers in Flight table
+            int flightId = getFlightIdFromOrder(orderId);
+            if (flightId == -1) {
+                return false;
+            }
+            flightService.addNumPassengersToFlight(flightId, 1);
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+   
 }

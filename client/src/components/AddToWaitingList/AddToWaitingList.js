@@ -6,7 +6,7 @@ import { Card, Box, Typography, MenuItem, FormControl } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-function Checkout() {
+function AddToWaitingList() {
   const params = useParams();
   const flightId = params.flightId;
   const [availableSeats, setAvailableSeats] = useState(null);
@@ -33,13 +33,15 @@ function Checkout() {
     };
 
     // console.log(passenger)
-
-    if ((availableSeats < 0) && passenger !== null) {
-      alert('No available seats or passenger info not complete.');
+    if (availableSeats > 0){
+      alert('Got available places, please procees to checkout');
+      navigate(`/checkout/${flightId}`, { replace: true });
+    } else if (passenger === null){
+      alert('Passenger info not complete.');
       return;
     } else {
       try {
-        const response = await api.post('/order/createOrder', {
+        const response = await api.post('/order/createWaitingList', {
           "userId": userId,
           "flightId": parseInt(flightId),
           "orderTotalPrice": flightInfo.flightPrice,
@@ -53,12 +55,12 @@ function Checkout() {
         });
         
         if (response.status === 200) {
-          toast.success('Successfully added to waiting list');
+          toast.success('Successfully added order');
           navigate(`/orders`, { replace: true });
         }
       } catch (error) {
         console.log(error);
-        toast.error('Failed to add waiting list');
+        toast.error('Failed to place order');
       }
     }
   };
@@ -89,15 +91,13 @@ function Checkout() {
         Loading flight...
       </Typography>
     );
-  } else if (availableSeats === 0 || availableSeats === null) {
-    return (
-      navigate(`/addToWaitingList/${flightId}`, { replace: true })
-    );
+  } else if (availableSeats > 0) {
+    navigate(`/checkout/${flightId}`, { replace: true });
   } else if (userId === null) {
     return (
       <Grid container justifyContent={"center"} alignItems={"center"}>
         <Typography item m={'10%'} variant="h5" color="primary" align="center">
-            Please login before proceed to checkout.
+            Please login before proceed to adding to waiting list.
         </Typography>
         <Button item variant="contained" color="primary" href="/signin">
             Login
@@ -111,9 +111,9 @@ function Checkout() {
         {/* Flight Information */}
         <Grid item xs={12} md={7} m={"1%"}>
             <Card>
-            <Typography variant="h4" color="primary" align='center' m={"3%"} mb={0}>
-              <strong>CHECKOUT</strong>
-            </Typography>
+                <Typography variant="h4" color="primary" align='center' m={"3%"} mb={0}>
+                  <strong>ADD TO WAITING LIST</strong>
+                </Typography>
                 <Box pt={3} px={2}>
                     <Typography variant="h6" fontWeight="bold">
                     Flight Information
@@ -288,7 +288,7 @@ function Checkout() {
                 id="phone_no"
                 autoComplete="phone_no"
               />
-              <Button m="5%" type="submit" variant='contained' fullWidth>Checkout</Button>
+              <Button m="5%" type="submit" variant='contained' fullWidth>Add to Waiting List</Button>
             </Box>
           </Card>
         </Grid>
@@ -296,6 +296,6 @@ function Checkout() {
   );
 }
 
-export default Checkout;
+export default AddToWaitingList;
 
 

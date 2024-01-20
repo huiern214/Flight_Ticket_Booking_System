@@ -10,6 +10,7 @@ public class Order {
     private String orderPaymentMethod;
     private Timestamp orderTimestamp;
     private int passengerId;
+    private String status; // "confirmed", "waiting"
 
     public Order() {
         this.orderId = -1;
@@ -19,6 +20,7 @@ public class Order {
         this.orderPaymentMethod = "";
         this.orderTimestamp = Timestamp.valueOf("0000-00-00 00:00:00");
         this.passengerId = 0;
+        this.status = "";
     }
 
     public Order(int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, int passengerId) {
@@ -29,6 +31,7 @@ public class Order {
         this.orderPaymentMethod = orderPaymentMethod;
         this.orderTimestamp = Timestamp.valueOf("0000-00-00 00:00:00");
         this.passengerId = passengerId;
+        this.status = "confirmed";
     }
 
     public Order(int orderId, int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, Timestamp orderTimestamp, int passengerId) {
@@ -39,6 +42,7 @@ public class Order {
         this.orderPaymentMethod = orderPaymentMethod;
         this.orderTimestamp = orderTimestamp;
         this.passengerId = passengerId;
+        this.status = "confirmed";
     }
 
     // Getters and setters
@@ -63,6 +67,9 @@ public class Order {
     public int getPassengerId() {
         return passengerId;
     }
+    public String getStatus() {
+        return status;
+    }
 
     public void setOrderId(int orderId) {
         this.orderId = orderId;
@@ -84,5 +91,8 @@ public class Order {
     }
     public void setPassengerId(int passengerId) {
         this.passengerId = passengerId;
+    }
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

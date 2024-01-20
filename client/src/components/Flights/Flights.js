@@ -16,7 +16,7 @@ function Flights() {
   const [allFlights, setAllFlights] = useState([]);
   const userId = useSelector((state) => state.user.userId);
   // const userId = 1;
-const today = dayjs();
+  const today = dayjs();
 
 
   // use get api to get all flights

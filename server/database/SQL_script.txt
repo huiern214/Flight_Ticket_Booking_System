@@ -42,7 +42,7 @@ CREATE TABLE Passenger (
     flight_id INT,
     passenger_firstname VARCHAR(255) NOT NULL,
     passenger_lastname VARCHAR(255) NOT NULL,
-    passenger_dob DATE NOT NULL,
+    passenger_passport_no VARCHAR(255) NOT NULL,
     passenger_gender VARCHAR(20) NOT NULL,
     passenger_email VARCHAR(255) NOT NULL,
     passenger_phone_no VARCHAR(20) NOT NULL,

@@ -35,13 +35,13 @@ public class FlightService {
                 int flight_id = resultSet.getInt("flight_id");
                 Date flight_departure_date = resultSet.getDate("flight_departure_date");
                 Time flight_departure_time = resultSet.getTime("flight_departure_time");
-                Date flight_arrive_Date = resultSet.getDate("flight_arrive_Date");
-                Time flight_arrive_time = resultSet.getTime("flight_arrival_time");
+                Date flight_arrival_date = resultSet.getDate("flight_arrival_date");
+                Time flight_arrival_time = resultSet.getTime("flight_arrival_time");
                 double flight_price = resultSet.getDouble("flight_price");
                 int flight_total_seats = resultSet.getInt("flight_total_seats");
                 int flight_total_passengers = resultSet.getInt("flight_total_passengers");
                 
-                flights.add(new Flight(flight_id,flight_departure_date,flight_departure_time,flight_arrive_Date,flight_arrive_time,flight_price,flight_total_seats,flight_total_passengers));
+                flights.add(new Flight(flight_id,flight_departure_date,flight_departure_time,flight_arrival_date,flight_arrival_time,flight_price,flight_total_seats,flight_total_passengers));
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -62,12 +62,12 @@ public class FlightService {
                 int flight_id = resultSet.getInt("flight_id");
                 Date flight_departure_date = resultSet.getDate("flight_departure_date");
                 Time flight_departure_time = resultSet.getTime("flight_departure_time");
-                Date flight_arrive_date = resultSet.getDate("flight_arrival_date");
-                Time flight_arrive_time = resultSet.getTime("flight_arrival_time");
+                Date flight_arrival_date = resultSet.getDate("flight_arrival_date");
+                Time flight_arrival_time = resultSet.getTime("flight_arrival_time");
                 double flight_price = resultSet.getDouble("flight_price");
                 int flight_total_seats = resultSet.getInt("flight_total_seats");
                 int flight_total_passengers = resultSet.getInt("flight_total_passengers");
-                flights.add(new Flight(flight_id, flight_departure_date, flight_departure_time, flight_arrive_date, flight_arrive_time, flight_price, flight_total_seats, flight_total_passengers));
+                flights.add(new Flight(flight_id, flight_departure_date, flight_departure_time, flight_arrival_date, flight_arrival_time, flight_price, flight_total_seats, flight_total_passengers));
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -99,8 +99,8 @@ public class FlightService {
                 int flight_id = resultSet.getInt("flight_id");
                 Date flight_departure_date = resultSet.getDate("flight_departure_date");
                 Time flight_departure_time = resultSet.getTime("flight_departure_time");
-                Date flight_arrive_Date = resultSet.getDate("flight_arrival_date");
-                Time flight_arrive_time = resultSet.getTime("flight_arrival_time");
+                Date flight_arrival_date = resultSet.getDate("flight_arrival_date");
+                Time flight_arrival_time = resultSet.getTime("flight_arrival_time");
                 double flight_price = resultSet.getDouble("flight_price");
                 int flight_total_seats = resultSet.getInt("flight_total_seats");
                 int flight_total_passengers = resultSet.getInt("flight_total_passengers");
@@ -108,7 +108,7 @@ public class FlightService {
                 // execute another query: SELECT COUNT(*) AS booked_seat FROM ticket as T WHERE T.flight_id = ? AND T.status = 'CONFIRMED';
                 // int booked_seats = rs.getInt(booked_seat);
                 // int available_seats = flight_total_seats - booked_seats
-                flights.add(new Flight(flight_id, flight_departure_date,flight_departure_time,flight_arrive_Date,flight_arrive_time,flight_price,flight_total_seats,flight_total_passengers));
+                flights.add(new Flight(flight_id, flight_departure_date,flight_departure_time,flight_arrival_date,flight_arrival_time,flight_price,flight_total_seats,flight_total_passengers));
             }
         } catch (SQLException e) {
             System.out.println(e);

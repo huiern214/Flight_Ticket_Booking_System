@@ -1,7 +1,6 @@
 package com.flyease.server.service;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,14 +21,14 @@ public class PassengerService {
 
     // FUNCTIONS TO IMPLEMENT
     // [1] update passenger information
-    public boolean updatePassenger(int passengerId, String firstName, String lastName, String email, Date dob, String gender, String phoneNo) throws SQLException {
-        String query = "UPDATE Passenger SET passenger_firstname = ?, passenger_lastname = ?, passenger_email = ?, passenger_dob = ?, passenger_gender = ?, passenger_phone_no = ? WHERE passenger_id = ?";
+    public boolean updatePassenger(int passengerId, String firstName, String lastName, String email, String passportNo, String gender, String phoneNo) throws SQLException {
+        String query = "UPDATE Passenger SET passenger_firstname = ?, passenger_lastname = ?, passenger_email = ?, passenger_passport_no = ?, passenger_gender = ?, passenger_phone_no = ? WHERE passenger_id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, firstName);
             statement.setString(2, lastName);
             statement.setString(3, email);
-            statement.setDate(4, dob);
+            statement.setString(4, passportNo);
             statement.setString(5, gender);
             statement.setString(6, phoneNo);
             statement.setInt(7, passengerId);
@@ -43,15 +42,15 @@ public class PassengerService {
 
     // HELPER FUNCTIONS
     // [1] add passenger to Passenger and return the passenger id
-    public int addPassenger(int userId, int flightId, String firstName, String lastName, String email, Date dob, String gender, String phoneNo) throws SQLException {
-        String query = "INSERT INTO Passenger (user_id, flight_id, passenger_firstname, passenger_lastname, passenger_dob, passenger_gender, passenger_email, passenger_phone_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public int addPassenger(int userId, int flightId, String firstName, String lastName, String email, String passportNo, String gender, String phoneNo) throws SQLException {
+        String query = "INSERT INTO Passenger (user_id, flight_id, passenger_firstname, passenger_lastname, passenger_passport_no, passenger_gender, passenger_email, passenger_phone_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
             statement.setInt(1, userId);
             statement.setInt(2, flightId);
             statement.setString(3, firstName);
             statement.setString(4, lastName);
-            statement.setDate(5, dob);
+            statement.setString(5, passportNo);
             statement.setString(6, gender);
             statement.setString(7, email);
             statement.setString(8, phoneNo);
@@ -93,12 +92,12 @@ public class PassengerService {
             if (resultSet.next()) {
                 String firstName = resultSet.getString("passenger_firstname");
                 String lastName = resultSet.getString("passenger_lastname");
-                Date dob = resultSet.getDate("passenger_dob");
+                String passportNo = resultSet.getString("passenger_passport_no");
                 String gender = resultSet.getString("passenger_gender");
                 String email = resultSet.getString("passenger_email");
                 String phoneNo = resultSet.getString("passenger_phone_no");
 
-                Passenger passenger = new Passenger(firstName, lastName, dob, gender, email, phoneNo);
+                Passenger passenger = new Passenger(firstName, lastName, passportNo, gender, email, phoneNo);
                 passenger.setPassengerId(passengerId);
                 return passenger;
             }

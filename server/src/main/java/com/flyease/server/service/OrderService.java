@@ -1,7 +1,6 @@
 package com.flyease.server.service;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,8 +15,7 @@ import com.flyease.server.model.Flight;
 import com.flyease.server.model.Order;
 import com.flyease.server.model.OrderDetails;
 import com.flyease.server.model.Passenger;
-import com.flyease.server.model.DTO.OrderInput;
-import com.flyease.server.model.DTO.PassengerInput;
+import com.flyease.server.model.DTO.CreateOrderInput;
 
 @Service
 public class OrderService {
@@ -37,9 +35,9 @@ public class OrderService {
     // 1. add passenger to the Passenger table
     // 2. add order to the Order table
     // 3. update flight_total_passengers in Flight table
-    public boolean addOrder(OrderInput order, PassengerInput passenger) throws SQLException {
+    public boolean addOrder(CreateOrderInput createOrderInput) throws SQLException {
         // 1. add passenger to the Passenger table
-        int passengerId = passengerService.addPassenger(order.getUserId(), order.getFlightId(), passenger.getPassengerFirstName(), passenger.getPassengerLastName(), passenger.getPassengerEmail(), Date.valueOf(passenger.getPassengerDob()), passenger.getPassengerGender(), passenger.getPassengerPhoneNo());
+        int passengerId = passengerService.addPassenger(createOrderInput.getUserId(), createOrderInput.getFlightId(), createOrderInput.getPassengerFirstName(), createOrderInput.getPassengerLastName(), createOrderInput.getPassengerEmail(), createOrderInput.getPassengerPassportNo(), createOrderInput.getPassengerGender(), createOrderInput.getPassengerPhoneNo());
         if (passengerId == -1) {
             return false;
         }
@@ -47,15 +45,15 @@ public class OrderService {
         String query = "INSERT INTO `Order` (user_id, flight_id, order_total_price, order_payment_method, passenger_id) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
-            statement.setInt(1, order.getUserId());
-            statement.setInt(2, order.getFlightId());
-            statement.setDouble(3, order.getOrderTotalPrice());
-            statement.setString(4, order.getOrderPaymentMethod());
+            statement.setInt(1, createOrderInput.getUserId());
+            statement.setInt(2, createOrderInput.getFlightId());
+            statement.setDouble(3, createOrderInput.getOrderTotalPrice());
+            statement.setString(4, createOrderInput.getOrderPaymentMethod());
             statement.setInt(5, passengerId);
             statement.executeUpdate();
             
             // 3. update flight_total_passengers in Flight table
-            flightService.addNumPassengersToFlight(order.getFlightId(), 1);
+            flightService.addNumPassengersToFlight(createOrderInput.getFlightId(), 1);
             return true;
 
         } catch (SQLException e) {

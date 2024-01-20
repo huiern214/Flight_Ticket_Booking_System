@@ -1,23 +1,3 @@
-// {
-//     "order": {
-//       "userId": 1,
-//       "flightId": 1,
-//       "orderTotalPrice": 100.00,
-//       "orderPaymentMethod": "FPX",
-//       "orderTotalPassengers": 1
-//     },
-//     "passengers": [
-//       {
-//         "passengerFirstName": "John",
-//         "passengerLastName": "Doe",
-//         "passengerDob": "2000-01-01",
-//         "passengerGender": "male",
-//         "passengerEmail": "johndoe@gmail",
-//         "passengerPhoneNo": "1234567890"
-//       }
-//     ]
-//   }
-
 import React, { useEffect, useState } from 'react';
 import api from '../../api/axiosConfig';
 import { useSelector } from 'react-redux';
@@ -44,34 +24,32 @@ function Checkout() {
     const data = new FormData(e.currentTarget);
 
     const passenger = {
-      passengerFirstName: data.get("firstName"),
-      passengerLastName: data.get("lastName"),
-      passengerDob: data.get("dob"),
-      passengerGender: data.get("gender"),
-      passengerEmail: data.get("email"),
-      passengerPhoneNo: data.get("phone_no"),
+      "passengerFirstName": data.get("firstName"),
+      "passengerLastName": data.get("lastName"),
+      "passengerPassportNo": data.get("passportNo"),
+      "passengerGender": data.get("gender"),
+      "passengerEmail": data.get("email"),
+      "passengerPhoneNo": data.get("phone_no"),
     };
 
-    console.log(passenger)
+    // console.log(passenger)
 
     if ((availableSeats < 0) && passenger !== null) {
       alert('No available seats or passenger info not complete.');
       return;
     } else {
-      const order = {
-        "order": {
-        "userId": userId,
-        "flightId": flightId,
-        "orderTotalPrice": flightInfo.flightPrice,
-        "orderPaymentMethod": "FPX"
-        },
-        "passenger": passenger
-      }
-      console.log(order);
-
       try {
         const response = await api.post('/order/createOrder', {
-          order
+          "userId": userId,
+          "flightId": parseInt(flightId),
+          "orderTotalPrice": flightInfo.flightPrice,
+          "orderPaymentMethod": "FPX",
+          "passengerFirstName": data.get("firstName"),
+          "passengerLastName": data.get("lastName"),
+          "passengerPassportNo": data.get("passportNo"),
+          "passengerGender": data.get("gender"),
+          "passengerEmail": data.get("email"),
+          "passengerPhoneNo": data.get("phone_no"),
         });
         
         if (response.status === 200) {
@@ -277,20 +255,10 @@ function Checkout() {
                 <Grid item xs={12} sm={6} md={6}>
                   <TextField
                     fullWidth
-                    id="dob"
-                    label="DOB"
-                    type="date"
-                    name="dob"
+                    id="passportNo"
+                    label="Passport No."
+                    name="passportNo"
                     required
-                    onFocus={
-                      (e)=> {
-                        e.currentTarget.type = "date";
-                        e.currentTarget.focus();
-                       }
-                     }
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6}>

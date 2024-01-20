@@ -7,8 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Comparator;
 
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,9 @@ import com.flyease.server.model.Flight;
 @Service
 public class FlightService {
     private Connection connection;
+   // private Map<Integer, Flight> flightCache = new HashMap<>();
+    private List<Flight> flightsList = new LinkedList<>();
+
     
     // establishes connection to the database
     public FlightService(Connection connection) {
@@ -36,24 +43,25 @@ public class FlightService {
                 int flight_id = resultSet.getInt("flight_id");
                 Date flight_departure_date = resultSet.getDate("flight_departure_date");
                 Time flight_departure_time = resultSet.getTime("flight_departure_time");
-                Date flight_arrive_Date = resultSet.getDate("flight_arrive_Date");
-                Time flight_arrive_time = resultSet.getTime("flight_arrival_time");
+                Date flight_arrival_date = resultSet.getDate("flight_arrival_date");
+                Time flight_arrival_time = resultSet.getTime("flight_arrival_time");
                 double flight_price = resultSet.getDouble("flight_price");
                 int flight_total_seats = resultSet.getInt("flight_total_seats");
                 int flight_total_passengers = resultSet.getInt("flight_total_passengers");
                 double flight_business_price = resultSet.getDouble("flight_business_price");
                 int flight_total_business_seats = resultSet.getInt("flight_total_business_seats");
                 int flight_total_business_passengers = resultSet.getInt("flight_total_business_passengers");
-                
-     
-                //TODO: add to this constructor
-                flights.add(new Flight(flight_id,flight_departure_date,flight_departure_time,flight_arrive_Date,flight_arrive_time,flight_price,flight_total_seats,flight_total_passengers,flight_business_price,flight_total_business_seats,flight_total_business_passengers));
+
+                flights.add(new Flight(flight_id, flight_departure_date, flight_departure_time, flight_arrival_date,
+                        flight_arrival_time, flight_price, flight_total_seats, flight_total_passengers,
+                        flight_business_price, flight_total_business_seats, flight_total_business_passengers));
             }
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return flights;
     }
+
 /* 
     // [2] get all the flights' information based on the flight date
 
@@ -69,14 +77,42 @@ public class FlightService {
     }
 */
     // public List<Flight> getAllFlightsBetweenDates(String date1, String date2)  --> DAO layer (FlightDao.java)
-    public List<Flight> getAllFlightsByDate(String date1, String date2){
-        List<Flight> flights = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-        
-        // SELECT * FROM Flight WHERE flight_depart_date >= ? and flight_depart_date <= ?
-        String query = "SELECT * FROM Flight WHERE flight_departure_date >= ? and flight_arrival_date <=?";
+    // [2] get all the flights' information based on the flight date and sorting criteria
+    public List<Flight> getAllFlightsByDate(String date1, String date2) {
+        // Call the existing method with default sorting by departure date and time
+        return getAllFlightsByDate(date1, date2, "departuredate");
+    }
 
-        //DAO layer - SQL and result set
+    public List<Flight> getAllFlightsByDate(String date1, String date2, String sortBy) {
+        List<Flight> flights = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        String query = "SELECT * FROM Flight WHERE flight_departure_date >= ? AND flight_arrival_date <= ?";
+
+        // Sort the data using departure date, departure time, duration, price, business price
+        if (sortBy != null && !sortBy.isEmpty()) {
+            query += " ORDER BY ";
+
+            switch (sortBy.toLowerCase()) {
+                case "departuredate":
+                    query += "flight_departure_date, flight_departure_time";
+                    break;
+                case "duration":
+                    // Calculate flight duration based on departure and arrival times
+                    query += "(flight_arrival_date - flight_departure_date) as duration";
+                    break;
+                case "price":
+                    query += "flight_price";
+                    break;
+                case "businessprice":
+                    query += "flight_business_price";
+                    break;
+                default:
+                    // Default sorting by departure date and time
+                    query += "flight_departure_date, flight_departure_time";
+            }
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             if (Date.valueOf(date1).getTime() >= Date.valueOf(date2).getTime()) {
                 statement.setDate(1, Date.valueOf(date2));
@@ -84,16 +120,16 @@ public class FlightService {
             } else {
                 statement.setDate(1, Date.valueOf(date1));
                 statement.setDate(2, Date.valueOf(date2));
-                //compare problem??
             }
+
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
                 int flight_id = resultSet.getInt("flight_id");
                 Date flight_departure_date = resultSet.getDate("flight_departure_date");
                 Time flight_departure_time = resultSet.getTime("flight_departure_time");
-                Date flight_arrive_Date = resultSet.getDate("flight_arrival_date");
-                Time flight_arrive_time = resultSet.getTime("flight_arrival_time");
+                Date flight_arrival_date = resultSet.getDate("flight_arrival_date");
+                Time flight_arrival_time = resultSet.getTime("flight_arrival_time");
                 double flight_price = resultSet.getDouble("flight_price");
                 int flight_total_seats = resultSet.getInt("flight_total_seats");
                 int flight_total_passengers = resultSet.getInt("flight_total_passengers");
@@ -101,13 +137,12 @@ public class FlightService {
                 int flight_total_business_seats = resultSet.getInt("flight_total_business_seats");
                 int flight_total_business_passengers = resultSet.getInt("flight_total_business_passengers");
 
-                // execute another query: SELECT COUNT(*) AS booked_seat FROM ticket as T WHERE T.flight_id = ? AND T.status = 'CONFIRMED';
-                // int booked_seats = rs.getInt(booked_seat);
-                // int available_seats = flight_total_seats - booked_seats
-                flights.add(new Flight(flight_id, flight_departure_date,flight_departure_time,flight_arrive_Date,flight_arrive_time,flight_price,flight_total_seats,flight_total_passengers,flight_business_price,flight_total_business_seats,flight_total_business_passengers));
+                flights.add(new Flight(flight_id, flight_departure_date, flight_departure_time, flight_arrival_date,
+                        flight_arrival_time, flight_price, flight_total_seats, flight_total_passengers,
+                        flight_business_price, flight_total_business_seats, flight_total_business_passengers));
             }
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         return flights;
     }
@@ -234,7 +269,6 @@ public class FlightService {
         }
         return false;
     }
-
 
     // HELPER FUNCTIONS
     // [1] add numPassengers to a flight

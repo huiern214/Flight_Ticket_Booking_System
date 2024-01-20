@@ -34,7 +34,7 @@ public class OrderController {
     // http://localhost:8080/order/createOrder
     @PostMapping("/createOrder")
     public ResponseEntity<String> createOrder(@RequestBody CreateOrderInput input) throws SQLException {
-        boolean add_success = orderService.addOrder(input.getOrder(), input.getPassengers());
+        boolean add_success = orderService.addOrder(input.getOrder(), input.getPassenger());
         
         if (add_success) {
             return ResponseEntity.ok("Order created successfully");        
@@ -51,7 +51,7 @@ public class OrderController {
     //       "orderPaymentMethod": "FPX",
     //       "orderTotalPassengers": 1
     //     },
-    //     "passengers": [
+    //     "passenger":
     //       {
     //         "passengerFirstName": "John",
     //         "passengerLastName": "Doe",
@@ -60,7 +60,6 @@ public class OrderController {
     //         "passengerEmail": "johndoe@gmail",
     //         "passengerPhoneNo": "1234567890"
     //       }
-    //     ]
     // }
       
     // http://localhost:8080/order/deleteOrder/{order_id}

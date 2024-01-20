@@ -5,14 +5,12 @@ public class OrderInput {
     private int flightId;
     private double orderTotalPrice;
     private String orderPaymentMethod;
-    private int orderTotalPassengers;
 
-    public OrderInput(int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, int orderTotalPassengers) {
+    public OrderInput(int userId, int flightId, double orderTotalPrice, String orderPaymentMethod) {
         this.userId = userId;
         this.flightId = flightId;
         this.orderTotalPrice = orderTotalPrice;
         this.orderPaymentMethod = orderPaymentMethod;
-        this.orderTotalPassengers = orderTotalPassengers;
     }
 
     // Getters and setters
@@ -28,9 +26,6 @@ public class OrderInput {
     public String getOrderPaymentMethod() {
         return orderPaymentMethod;
     }
-    public int getOrderTotalPassengers() {
-        return orderTotalPassengers;
-    }
 
     public void setUserId(int userId) {
         this.userId = userId;
@@ -43,8 +38,5 @@ public class OrderInput {
     }
     public void setOrderPaymentMethod(String orderPaymentMethod) {
         this.orderPaymentMethod = orderPaymentMethod;
-    }
-    public void setOrderTotalPassengers(int orderTotalPassengers) {
-        this.orderTotalPassengers = orderTotalPassengers;
     }
 }

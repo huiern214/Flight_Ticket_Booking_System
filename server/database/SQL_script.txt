@@ -13,36 +13,26 @@ CREATE TABLE User (
 
 CREATE TABLE Flight (
     flight_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    flight_depart_date DATE NOT NULL,
+    flight_departure_date DATE NOT NULL,
     flight_departure_time TIME NOT NULL,
     flight_arrival_date DATE NOT NULL,
     flight_arrival_time TIME NOT NULL,
     flight_price DECIMAL(10, 2) DEFAULT 100.00,
     flight_total_seats INT DEFAULT 50,
     flight_total_passengers INT DEFAULT 0,
-    flight_total_business_seats INT DEFAULT 20,
-    flight_total_business_passengers INT DEFAULT 0,
     CONSTRAINT chk_total_passengers CHECK (flight_total_passengers <= flight_total_seats)
-    CONSTRAINT chk_total_passengers CHECK (flight_total_business_passengers <= flight_total_business_seats)
 );
 
 CREATE TABLE `Order` (
     order_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INT,
     flight_id INT,
-    order_total_passenger INT,
+    passenger_id INT,
     order_total_price DECIMAL(10, 2) NOT NULL,
     order_payment_method VARCHAR(255) NOT NULL,
     order_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES User(user_id),
-    CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES Flight(flight_id)
-);
-
-CREATE TABLE Order_Passenger (
-    order_passenger_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_id INT,
-    passenger_id INT,
-    CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES `Order`(order_id),
+    CONSTRAINT fk_flight FOREIGN KEY (flight_id) REFERENCES Flight(flight_id),
     CONSTRAINT fk_passenger FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id)
 );
 

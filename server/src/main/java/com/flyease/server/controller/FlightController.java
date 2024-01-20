@@ -32,14 +32,23 @@ public class FlightController {
         this.flightService = flightService;
     }
 
-    //changed 'date' to 'date1, date2'
-    // http://localhost:8080/flight/getAllFlightsByDate/startDate=2023-12-25&endDate=2023-12-29
-    @GetMapping("/getAllFlightsByDate/startDate={date1}&endDate={date2}")
-    public ResponseEntity<List<Flight>> getAllFlightsByDate(@PathVariable String date1, @PathVariable String date2) {
-        if (flightService.getAllFlightsByDate(date1, date2) == null) {
+    // http://localhost:8080/flight/getAllFlightsByDate/2023-12-25
+    @GetMapping("/getAllFlightsByDate/{date}")
+    public ResponseEntity<List<Flight>> getAllFlightsByDate(@PathVariable String date) {
+        if (flightService.getAllFlightsByDate(date) == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         } else {
-            return ResponseEntity.ok().body(flightService.getAllFlightsByDate(date1, date2));
+            return ResponseEntity.ok().body(flightService.getAllFlightsByDate(date));
+        }
+    }
+
+    // http://localhost:8080/flight/getAllFlightsBetweenDates/startDate=2023-12-25&endDate=2023-12-29
+    @GetMapping("/getAllFlightsBetweenDates/startDate={date1}&endDate={date2}")
+    public ResponseEntity<List<Flight>> getAllFlightsBetweenDates(@PathVariable String date1, @PathVariable String date2) {
+        if (flightService.getAllFlightsBetweenDates(date1, date2) == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } else {
+            return ResponseEntity.ok().body(flightService.getAllFlightsBetweenDates(date1, date2));
         }
     }
 
@@ -87,7 +96,7 @@ public class FlightController {
     // http://localhost:8080/flight/addFlight
     @PostMapping("/addFlight")
     public ResponseEntity<String> addFlight(@RequestBody FlightInput flightInput) {
-        boolean add_success = flightService.addFlight(Date.valueOf(flightInput.getFlightDepartureDate()), Time.valueOf(flightInput.getFlightDepartureTime()), Date.valueOf(flightInput.getFlightArrivalDate()), Time.valueOf(flightInput.getFlightArrivalTime()), flightInput.getFlightPrice(), flightInput.getFlightTotalSeats(),flightInput.getFlightBusinessPrice(),flightInput.getFlightTotalBusinessSeats());
+        boolean add_success = flightService.addFlight(Date.valueOf(flightInput.getFlightDepartureDate()), Time.valueOf(flightInput.getFlightDepartureTime()), Date.valueOf(flightInput.getFlightArrivalDate()), Time.valueOf(flightInput.getFlightArrivalTime()), flightInput.getFlightPrice(), flightInput.getFlightTotalSeats());
         
         if (add_success) {
             return ResponseEntity.ok("Flight added successfully");        
@@ -99,6 +108,8 @@ public class FlightController {
     // {
     //     "flightDepartureDate": "2024-12-25",
     //     "flightDepartureTime": "12:00:00",
+    //     "flightArrivalDate": "2024-12-25",
+    //     "flightArrivalTime": "15:00:00",
     //     "flightPrice": 100.00,
     //     "flightTotalSeats": 50
     // }
@@ -106,7 +117,7 @@ public class FlightController {
     // http://localhost:8080/flight/updateFlight/{flight_id}
     @PostMapping("/updateFlight/{flight_id}")
     public ResponseEntity<String> updateFlight(@PathVariable int flight_id, @RequestBody FlightInput flightInput) {
-        boolean update_success = flightService.updateFlight(flight_id, Date.valueOf(flightInput.getFlightDepartureDate()), Time.valueOf(flightInput.getFlightDepartureTime()), Date.valueOf(flightInput.getFlightArrivalDate()), Time.valueOf(flightInput.getFlightArrivalTime()), flightInput.getFlightPrice(), flightInput.getFlightTotalSeats(),flightInput.getFlightBusinessPrice(),flightInput.getFlightTotalBusinessSeats());
+        boolean update_success = flightService.updateFlight(flight_id, Date.valueOf(flightInput.getFlightDepartureDate()), Time.valueOf(flightInput.getFlightDepartureTime()), Date.valueOf(flightInput.getFlightArrivalDate()), Time.valueOf(flightInput.getFlightArrivalTime()), flightInput.getFlightPrice(), flightInput.getFlightTotalSeats());
         if (update_success) {
             return ResponseEntity.ok("Flight updated successfully");        
         } else {
@@ -117,6 +128,8 @@ public class FlightController {
     // {
     //     "flightDepartureDate": "2024-12-25",
     //     "flightDepartureTime": "12:00:00",
+    //     "flightArrivalDate": "2024-12-25",
+    //     "flightArrivalTime": "14:00:00",
     //     "flightPrice": 150.00,
     //     "flightTotalSeats": 50
     // }

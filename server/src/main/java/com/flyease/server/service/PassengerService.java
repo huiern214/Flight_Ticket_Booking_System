@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -70,45 +68,7 @@ public class PassengerService {
         return -1; // Return -1 if passenger ID retrieval fails
     }
 
-    // [2] delete all passengers based on the order id
-    // 1. get all the passengers' id from Order_Passenger table
-    // 2. delete all the passengers' information from Passenger table
-    // 3. delete all the passengers' id from Order_Passenger table
-    public boolean deleteAllPassengersFromOrder(int orderId) throws SQLException {
-        String query = "SELECT passenger_id FROM Order_Passenger WHERE order_id = ?";
-        List<Integer> passengerIds = new ArrayList<>();
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, orderId);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                int passengerId = resultSet.getInt("passenger_id");
-                passengerIds.add(passengerId);
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-
-        boolean success = true;
-        for (int passengerId : passengerIds) {
-            success &= deletePassengerById(passengerId);
-        }
-
-        if (success) {
-            String deleteOrderPassengerQuery = "DELETE FROM Order_Passenger WHERE order_id = ?";
-            try (PreparedStatement statement = connection.prepareStatement(deleteOrderPassengerQuery)) {
-                statement.setInt(1, orderId);
-                statement.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println(e);
-            }
-        }
-
-        return success;
-    }
-
-    //// [2 subfunction] delete passenger based on the passenger id from Passenger table
+    // [2] delete passenger based on the passenger id from Passenger table
     public boolean deletePassengerById(int passengerId) throws SQLException {
         String query = "DELETE FROM Passenger WHERE passenger_id = ?";
 
@@ -122,32 +82,8 @@ public class PassengerService {
         return false;
     }
 
-    // [3] get all the passengers' information based on the order id
-    // 1. get all the passengers' id from Order_Passenger table using order id
-    // 2. get all the passengers' information from Passenger table using passenger id
-    public List<Passenger> getAllPassengersFromOrder(int orderId) throws SQLException {
-        List<Passenger> passengers = new ArrayList<>();
-        String query = "SELECT passenger_id FROM Order_Passenger WHERE order_id = ?";
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, orderId);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                int passengerId = resultSet.getInt("passenger_id");
-                Passenger passenger = getPassengerById(passengerId);
-                if (passenger != null) {
-                    passengers.add(passenger);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return passengers;
-    }
-
-    // [3 subfunction] get passenger information by passenger id
-    private Passenger getPassengerById(int passengerId) throws SQLException {
+    // [3] get passenger information by passenger id
+    public Passenger getPassengerById(int passengerId) throws SQLException {
         String query = "SELECT * FROM Passenger WHERE passenger_id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {

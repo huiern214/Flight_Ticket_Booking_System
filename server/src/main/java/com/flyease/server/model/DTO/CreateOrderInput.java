@@ -1,28 +1,26 @@
 package com.flyease.server.model.DTO;
 
-import java.util.List;
-
 public class CreateOrderInput {
     private OrderInput order;
-    private List<PassengerInput> passengers;
+    private PassengerInput passenger;
 
-    public CreateOrderInput(OrderInput order, List<PassengerInput> passengers) {
+    public CreateOrderInput(OrderInput order, PassengerInput passenger) {
         this.order = order;
-        this.passengers = passengers;
+        this.passenger = passenger;
     }
 
     // Getters and setters
     public OrderInput getOrder() {
         return order;
     }
-    public List<PassengerInput> getPassengers() {
-        return passengers;
+    public PassengerInput getPassenger() {
+        return passenger;
     }
 
     public void setOrder(OrderInput order) {
         this.order = order;
     }
-    public void setPassengers(List<PassengerInput> passengers) {
-        this.passengers = passengers;
+    public void setPassenger(PassengerInput passenger) {
+        this.passenger = passenger;
     }
 }

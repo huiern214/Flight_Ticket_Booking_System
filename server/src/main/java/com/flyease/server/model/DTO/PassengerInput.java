@@ -3,15 +3,15 @@ package com.flyease.server.model.DTO;
 public class PassengerInput {
     private String passengerFirstName;
     private String passengerLastName;
-    private String passengerDob;
+    private String passengerPassportNo;
     private String passengerGender;
     private String passengerEmail;
     private String passengerPhoneNo;
 
-    public PassengerInput(String passengerFirstName, String passengerLastName, String passengerDob, String passengerGender, String passengerEmail, String passengerPhoneNo){
+    public PassengerInput(String passengerFirstName, String passengerLastName, String passengerPassportNo, String passengerGender, String passengerEmail, String passengerPhoneNo){
         this.passengerFirstName = passengerFirstName;
         this.passengerLastName = passengerLastName;
-        this.passengerDob = passengerDob; // format: yyyy-mm-dd
+        this.passengerPassportNo = passengerPassportNo; // format: yyyy-mm-dd
         this.passengerGender = passengerGender;
         this.passengerEmail = passengerEmail;
         this.passengerPhoneNo = passengerPhoneNo;
@@ -24,8 +24,8 @@ public class PassengerInput {
     public String getPassengerLastName(){
         return passengerLastName;
     }
-    public String getPassengerDob(){
-        return passengerDob;
+    public String getPassengerPassportNo(){
+        return passengerPassportNo;
     }
     public String getPassengerGender(){
         return passengerGender;
@@ -43,8 +43,8 @@ public class PassengerInput {
     public void setPassengerLastName(String passengerLastName){
         this.passengerLastName = passengerLastName;
     }
-    public void setPassengerDob(String passengerDob){
-        this.passengerDob = passengerDob;
+    public void setPassengerPassportNo(String passengerPassportNo){
+        this.passengerPassportNo = passengerPassportNo;
     }
     public void setPassengerGender(String passengerGender){
         this.passengerGender = passengerGender;
@@ -54,5 +54,10 @@ public class PassengerInput {
     }
     public void setPassengerPhoneNo(String passengerPhoneNo){
         this.passengerPhoneNo = passengerPhoneNo;
+    }
+
+    @Override
+    public String toString() {
+        return "passengerFirstName: " + passengerFirstName + "\npassengerLastName: " + passengerLastName + "\npassengerPassportNo: " + passengerPassportNo + "\npassengerGender: " + passengerGender + "\npassengerEmail: " + passengerEmail + "\npassengerPhoneNo: " + passengerPhoneNo;
     }
 }

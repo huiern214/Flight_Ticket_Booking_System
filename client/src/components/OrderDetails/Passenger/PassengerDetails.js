@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Delete, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import api from "../../../api/axiosConfig";
 import { toast } from 'react-toastify';
 import { MenuItem } from "@mui/material";
@@ -10,25 +10,10 @@ import { Grid } from "@mui/material";
 import { useState } from "react";
 import { FormControl } from "@mui/material";
 
-function PassengerDetails({ passengerId, firstName, lastName, email, dob, gender, phone_no, noGutter }) {
+function PassengerDetails({ passengerId, firstName, lastName, email, passport_no, gender, phone_no}) {
 
   const [showModal, setShowModal] = useState(false);
   
-  // Delete a passenger
-  const deletePassenger = async () => {
-    try {
-      const response = await api.delete(`/user/deletePassenger/${passengerId}`);
-      if (response.status === 200) {
-        console.log(response.data);
-        toast.success('Passenger deleted successfully!');
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error('Error deleting passenger');
-    }
-  };
-
   // Edit a passenger
   const updatePassenger = async (e) => {
     e.preventDefault();
@@ -37,15 +22,15 @@ function PassengerDetails({ passengerId, firstName, lastName, email, dob, gender
     const passenger = {
       "passengerFirstName": data.get('firstName'),
       "passengerLastName": data.get('lastName'),
-      "passengerDob": data.get('dob'),
+      "passengerPassportNo": data.get('passport_no'),
       "passengerGender": data.get('gender'),
       "passengerEmail": data.get('email'),
       "passengerPhoneNo": data.get('phone_no')
     }
     console.log(passenger);
-        
+
     try {
-      const response = await api.post(`/user/${passengerId}/updatePassenger`, passenger);
+      const response = await api.post(`/passenger/updatePassenger/${passengerId}`, passenger);
       if (response.status === 200) {
         toast.success('Passenger updated successfully!');
         setShowModal(false);
@@ -64,7 +49,6 @@ function PassengerDetails({ passengerId, firstName, lastName, email, dob, gender
       alignItems="flex-start"
       borderRadius="lg"
       p={3}
-      mb={noGutter ? 0 : 1}
       mt={0}
     >
       <Box width="100%" display="flex" flexDirection="column">
@@ -80,12 +64,6 @@ function PassengerDetails({ passengerId, firstName, lastName, email, dob, gender
           </Typography>
 
           <Box display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
-            <Box mr={1}>
-              <Button variant="text" color="error" onClick={deletePassenger}>
-                <Delete />
-                <strong>Delete</strong>
-              </Button>
-            </Box>
             <Button variant="text" onClick={setShowModal}>
               <Edit />
               <strong>Edit</strong>
@@ -102,9 +80,9 @@ function PassengerDetails({ passengerId, firstName, lastName, email, dob, gender
         </Box>
         <Box mb={1} lineHeight={0}>
           <Typography variant="caption" color="rgb(123, 128, 154)">
-            Date of Birth:&nbsp;&nbsp;&nbsp;
+            Passport No.:&nbsp;&nbsp;&nbsp;
             <Typography variant="caption" fontWeight="bold" textTransform="capitalize" color={"rgb(52, 71, 103)"}>
-              {dob}
+              {passport_no}
             </Typography>
           </Typography>
         </Box>
@@ -124,8 +102,8 @@ function PassengerDetails({ passengerId, firstName, lastName, email, dob, gender
         </Typography>
       </Box>
       {showModal && (
-        // passengerId, firstName, lastName, email, dob, gender, phone_no
-        <Box component="form" noValidate onSubmit={updatePassenger} sx={{ mt: 1 }}>
+        // passengerId, firstName, lastName, email, passport_no, gender, phone_no
+        <Box width={"100%"} component="form" noValidate onSubmit={updatePassenger} sx={{ mt: 1 }}>
           <Grid container spacing={2} marginTop={'2%'} marginBottom={'2%'}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -165,14 +143,11 @@ function PassengerDetails({ passengerId, firstName, lastName, email, dob, gender
             <Grid item xs={12} sm={6} md={6}>
               <TextField
                 fullWidth
-                id="dob"
-                label="DOB"
-                type="date"
-                name="dob"
-                defaultValue={dob}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                id="passport_no"
+                label="Passport No."
+                name="passport_no"
+                defaultValue={passport_no}
+                required
               />
             </Grid>
             <Grid item xs={12} sm={6} md={6}>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import api from '../../api/axiosConfig';
 import { useSelector } from 'react-redux';
 import { Grid } from '@mui/material';
-import Passenger from './Passenger/Passenger';
 import { Card, Box, Typography } from '@mui/material';
 
 function Profile() {

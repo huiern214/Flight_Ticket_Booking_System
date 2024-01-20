@@ -1,6 +1,5 @@
 package com.flyease.server.controller;
 
-import java.sql.Date;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class PassengerController {
     // http://localhost:8080/passenger/updatePassenger/{passenger_id}
     @PostMapping("/updatePassenger/{passenger_id}")
     public ResponseEntity<String> updatePassenger(@PathVariable int passenger_id, @RequestBody PassengerInput passengerInput) throws SQLException {
-        boolean update_success = passengerService.updatePassenger(passenger_id, passengerInput.getPassengerFirstName(), passengerInput.getPassengerLastName(), passengerInput.getPassengerEmail(), Date.valueOf(passengerInput.getPassengerDob()), passengerInput.getPassengerGender(), passengerInput.getPassengerPhoneNo());
+        boolean update_success = passengerService.updatePassenger(passenger_id, passengerInput.getPassengerFirstName(), passengerInput.getPassengerLastName(), passengerInput.getPassengerEmail(), passengerInput.getPassengerPassportNo(), passengerInput.getPassengerGender(), passengerInput.getPassengerPhoneNo());
         if (update_success) {
             return ResponseEntity.ok("Passenger updated successfully");        
         } else {
@@ -42,7 +41,7 @@ public class PassengerController {
     // {
     //     "passengerFirstName": "John",
     //     "passengerLastName": "Doe",
-    //     "passengerDob": "2000-01-01",
+    //     "passengerPassportNo": "1234567",
     //     "passengerGender": "male",
     //     "passengerEmail": "johndoe@gmail.com",
     //     "passengerPhoneNo": "1234567890"

@@ -1,22 +1,20 @@
 package com.flyease.server.model;
 
-import java.util.List;
-
 public class OrderDetails {
     private Order order;
     private Flight flight;
-    private List<Passenger> passengers;
+    private Passenger passenger;
 
     public OrderDetails() {
         this.order = new Order();
         this.flight = new Flight();
-        this.passengers = null;
+        this.passenger = null;
     }
 
-    public OrderDetails(Order order, Flight flight, List<Passenger> passengers) {
+    public OrderDetails(Order order, Flight flight, Passenger passenger) {
         this.order = order;
         this.flight = flight;
-        this.passengers = passengers;
+        this.passenger = passenger;
     }
 
     // Getters and setters
@@ -26,8 +24,8 @@ public class OrderDetails {
     public Flight getFlight() {
         return flight;
     }
-    public List <Passenger> getPassengers() {
-        return passengers;
+    public Passenger getPassenger() {
+        return passenger;
     }
 
     public void setOrder(Order order) {
@@ -36,7 +34,7 @@ public class OrderDetails {
     public void setFlight(Flight flight) {
         this.flight = flight;
     }
-    public void setPassengers(List<Passenger> passengers) {
-        this.passengers = passengers;
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
     }
 }

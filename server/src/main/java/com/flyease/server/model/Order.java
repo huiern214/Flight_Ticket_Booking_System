@@ -9,7 +9,7 @@ public class Order {
     private double orderTotalPrice;
     private String orderPaymentMethod;
     private Timestamp orderTimestamp;
-    private int ordertotalPassengers;
+    private int passengerId;
 
     public Order() {
         this.orderId = -1;
@@ -18,27 +18,27 @@ public class Order {
         this.orderTotalPrice = 0.00;
         this.orderPaymentMethod = "";
         this.orderTimestamp = Timestamp.valueOf("0000-00-00 00:00:00");
-        this.ordertotalPassengers = 0;
+        this.passengerId = 0;
     }
 
-    public Order(int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, int ordertotalPassengers) {
+    public Order(int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, int passengerId) {
         this.orderId = -1;
         this.userId = userId;
         this.flightId = flightId;
         this.orderTotalPrice = orderTotalPrice;
         this.orderPaymentMethod = orderPaymentMethod;
         this.orderTimestamp = Timestamp.valueOf("0000-00-00 00:00:00");
-        this.ordertotalPassengers = ordertotalPassengers;
+        this.passengerId = passengerId;
     }
 
-    public Order(int orderId, int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, Timestamp orderTimestamp, int ordertotalPassengers) {
+    public Order(int orderId, int userId, int flightId, double orderTotalPrice, String orderPaymentMethod, Timestamp orderTimestamp, int passengerId) {
         this.orderId = orderId;
         this.userId = userId;
         this.flightId = flightId;
         this.orderTotalPrice = orderTotalPrice;
         this.orderPaymentMethod = orderPaymentMethod;
         this.orderTimestamp = orderTimestamp;
-        this.ordertotalPassengers = ordertotalPassengers;
+        this.passengerId = passengerId;
     }
 
     // Getters and setters
@@ -60,8 +60,8 @@ public class Order {
     public Timestamp getOrderTimestamp() {
         return orderTimestamp;
     }
-    public int getOrderTotalPassengers() {
-        return ordertotalPassengers;
+    public int getPassengerId() {
+        return passengerId;
     }
 
     public void setOrderId(int orderId) {
@@ -82,7 +82,7 @@ public class Order {
     public void setOrderTimestamp(Timestamp orderTimestamp) {
         this.orderTimestamp = orderTimestamp;
     }
-    public void setOrderTotalPassengers(int ordertotalPassengers) {
-        this.ordertotalPassengers = ordertotalPassengers;
+    public void setPassengerId(int passengerId) {
+        this.passengerId = passengerId;
     }
 }

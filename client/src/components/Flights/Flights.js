@@ -10,25 +10,13 @@ import { useState } from 'react';
 import api from '../../api/axiosConfig';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import { MenuItem, FormControl, TextField } from '@mui/material';
+import { format, startOfWeek, endOfWeek, addWeeks } from 'date-fns'
 
 function Flights() {
   const [selectedDate, setSelectedDate] = useState(null);
-  const [allFlights, setAllFlights] = useState([]);
   const userId = useSelector((state) => state.user.userId);
-  // const userId = 1;
-const today = dayjs();
-
-
-  // use get api to get all flights
-  const fetchAllFlights = async() => {
-    try {
-      const response = await api.get(`/flight/getAllFlights`);
-      setAllFlights(response.data);
-    } catch (error) {
-      console.error('Error fetching flight data:', error);
-      toast.error('Error');
-    }      
-  };
+  const today = dayjs();
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -36,10 +24,6 @@ const today = dayjs();
     
   useEffect(() => {
     handleDateChange(today);
-    fetchAllFlights()
-      .then(() => {
-        console.log('Updated allFlights:', allFlights);
-      });
   }, []);
   
   return (
@@ -71,15 +55,14 @@ const today = dayjs();
             <StaticDatePicker
                 orientation='portrait'
                 openTo="day"
-                value={today}
-                // value={selectedDate}
+                value={selectedDate}
                 onChange={handleDateChange}
                 disablePast
             />
           </LocalizationProvider>
         </Grid>
         {selectedDate && (
-          <FlightDetails item selectedDate={selectedDate.toISOString().split('T')[0]} allFlights={allFlights}/>
+          <FlightDetails item selectedDate={selectedDate.format('YYYY-MM-DD')}/>
         )}
     </Grid>
   )
@@ -91,6 +74,37 @@ function FlightDetails({ selectedDate }) {
 
   const [showAll, setShowAll] = useState(false); // Initialize showAll state
   const [filteredFlights, setFilteredFlights] = useState([]);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState("");
+  const [condition, setCondition] = useState("");
+
+  // Function to get the current week's start date
+  const getCurrentWeekStartDate = () => {
+    const today = new Date();
+    return startOfWeek(today);
+  };
+
+  // Create an array of predefined weeks with start and end dates
+  const today = dayjs();
+  const currentWeekStartDate = getCurrentWeekStartDate();
+  // const baseDate = new Date(2024, 0, 1);
+  // const currentWeek = startOfWeek(baseDate);
+  const currentWeek = startOfWeek(new Date(today));
+
+  const weeksArray = Array.from({ length: 20 }, (_, index) => {
+    const weekStart = startOfWeek(addWeeks(currentWeek, index));
+    const weekEnd = endOfWeek(addWeeks(currentWeek, index));
+
+    // Filter out weeks before the current week
+    if (today.isAfter(dayjs(currentWeekStartDate))) {
+      return {
+        label: `Week ${index + 1} (${format(weekStart, 'do MMM yyyy')} - ${format(weekEnd, 'do MMM yyyy')})`,
+        start: weekStart,
+        end: weekEnd,
+      };
+    }
+
+    return null;
+  }).filter(Boolean); // Remove null entries
 
   const handleShowAllClick = () => {
     setShowAll(!showAll); // Toggle showAll state
@@ -107,17 +121,34 @@ function FlightDetails({ selectedDate }) {
   // use post api to get flights on selected date
   const fetchSelectedDateFlight = async(selectedDate) => {
     try {
-      //TODO: change selectedDate to Date1 and Date2?
       const response = await api.get(`/flight/getAllFlightsByDate/${selectedDate}`); 
       setFilteredFlights(response.data);
-
-      // setLastUpdateTime(response.headers['last-update']);
-      // console.log(lastUpdateTime);
-      // setLastUpdateTime(lastUpdateTime);
-
+      setCondition("date");
     } catch (error) {
       console.error('Error fetching flight data:', error);
     }
+  };
+
+  // fetch all flights between Date1 and Date2
+  const fetchFlightsBetweenDates = async(startDate, endDate) => {
+    try {
+      const response = await api.get(`/flight/getAllFlightsBetweenDates/startDate=${startDate}&endDate=${endDate}`);
+      setFilteredFlights(response.data);
+    } catch (error) {
+      console.error('Error fetching flight data:', error);
+      toast.error('Error');
+    }
+  };
+  // use get api to get all flights
+  const fetchAllFlights = async() => {
+    try {
+      const response = await api.get(`/flight/getAllFlights`);
+      setFilteredFlights(response.data);
+      setCondition("all");
+    } catch (error) {
+      console.error('Error fetching flight data:', error);
+      toast.error('Error');
+    }      
   };
 
   // Function to filter flights based on the flight date
@@ -146,8 +177,11 @@ function FlightDetails({ selectedDate }) {
   useEffect(() => {
     if (selectedDate) {
       fetchSelectedDateFlight(selectedDate);
+    } else {
+      fetchAllFlights();
     }
   }, [selectedDate]);
+
   const clickWaiting = () => toast.success('Added successfully.');
 
   return (
@@ -158,14 +192,54 @@ function FlightDetails({ selectedDate }) {
     // xs={12} sm={12} md={12}
     margin={'10%'}
     mb={'3%'}
-    mt={'5%'}
+    mt={'2%'}
     sx= {{
         '@media (max-width:680px)': {
         marginTop: '15%',
       }
     }}
     >
-
+    <Grid item mb={"2%"} xs={12}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <Button xs={6} sm={6} md={6} onClick={fetchAllFlights}>Show All Flights</Button>
+      <FormControl xs={6} sm={6} md={6}>
+        <TextField
+          select
+          label='SELECT WEEK'
+          name='week'
+          value={selectedWeekIndex}
+          onChange={(event) => {
+            setSelectedWeekIndex(event.target.value);
+            setCondition("week");
+            // Here, you can call your API with the start and end dates for the selected week
+            if (event.target.value !== '') {
+              const selectedWeek = weeksArray[event.target.value];
+              const startDate = selectedWeek.start.toISOString().split('T')[0];
+              const endDate = selectedWeek.end.toISOString().split('T')[0];
+              // Call your API using startDate and endDate
+              fetchFlightsBetweenDates(startDate, endDate);
+            }
+          }}
+          sx={{
+            marginLeft: '10px',
+            minWidth: '200px',
+          }}
+        >
+          <MenuItem value="">
+            <em>Select Week</em>
+          </MenuItem>
+          {weeksArray.map((week, index) => (
+            <MenuItem key={index} value={index}>
+              {week.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      </FormControl>
+    </Grid>
     {/* Table for flights */}
     <TableContainer component={Paper} 
     style={{
@@ -179,6 +253,9 @@ function FlightDetails({ selectedDate }) {
     }}>
       <Typography variant="h6" m={'4% 1% 2% 3%'} fontWeight='700' lineHeight={'1.2'} fontSize={'1.0625rem'}>
           Flights
+          {condition === "date" ? ` (${selectedDate})` : null}
+          {condition === "week" ? ` (Week ${selectedWeekIndex + 1})` : null}
+          {condition === "all" ? ` (All)` : null}
       </Typography>
       <Table>
         <TableHead>
@@ -189,8 +266,8 @@ function FlightDetails({ selectedDate }) {
             '& th': {fontWeight: '550'}
           }}>
             <TableCell>Flight ID</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Time</TableCell>
+            <TableCell>Departure</TableCell>
+            <TableCell>Arrival</TableCell>
             <TableCell>Price</TableCell>
             <TableCell>Seats</TableCell>
             <TableCell>Action</TableCell>
@@ -198,11 +275,11 @@ function FlightDetails({ selectedDate }) {
         </TableHead>
         {(filteredFlights.length === 0) ? null : 
           <TableBody>
-            {(filteredFlights.slice(0, showAll ? filteredFlights.length : 1).map((flight, index) =>
+            {(filteredFlights.slice(0, showAll ? filteredFlights.length : 5).map((flight, index) =>
             <TableRow key={flight.flightId}>
               <TableCell>{flight.flightId}</TableCell>
-              <TableCell>{flight.flightDepartureDate}</TableCell>
-              <TableCell>{flight.flightDepartureTime}</TableCell>
+              <TableCell>{flight.flightDepartureDate} {flight.flightDepartureTime}</TableCell>
+              <TableCell>{flight.flightArrivalDate} {flight.flightArrivalTime}</TableCell>
               <TableCell>RM {flight.flightPrice}</TableCell>
               <TableCell>{flight.flightTotalPassengers} / {flight.flightTotalSeats}</TableCell>
               <TableCell>

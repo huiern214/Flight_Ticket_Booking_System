@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import {
   Table,
@@ -16,34 +16,8 @@ import {
 } from '@mui/material';
 import './Orders.css'
 import { KeyboardArrowRight } from '@mui/icons-material';
-
-const currentDateTime = new Date(); // Get the current date and time
-
-function getStatus(booking) {
-  const bookingDateTime = new Date(`${booking.date}T${booking.time}`);
-  
-  if (bookingDateTime < currentDateTime) {
-    return 'Completed';
-  } else {
-    return 'Upcoming'; 
-  }
-}
-
-const bookingsData = [
-  {
-    order_id: 1,
-    flight_id: 1,
-    date: '2023-12-20', time: '10:00:00',
-    passengers: 2,
-  },
-  {
-    order_id: 2,
-    flight_id: 2,
-    date: '2023-12-15', time: '14:30:00',
-    passengers: 4,
-  },
-  // Add more booking data objects as needed
-];
+import { useSelector } from 'react-redux';
+import api from '../../api/axiosConfig';
 
 const waitingListData = [
   {
@@ -66,6 +40,34 @@ const waitingListData = [
 function Orders () {
   const [showAll, setShowAll] = useState(false); // Initialize showAll state
   const [showAll2, setShowAll2] = useState(false); // Initialize showAll state
+  const currentDateTime = new Date(); // Get the current date and time
+  const userId = useSelector((state) => state.user.userId);
+  const [orders, setOrders] = useState([]);
+
+  function getStatus(booking) {
+    const bookingDateTime = new Date(`${booking.flight.flightDepartureDate}T${booking.flight.flightDepartureTime}`);
+    
+    if (bookingDateTime < currentDateTime) {
+      return 'Completed';
+    } else {
+      return 'Upcoming'; 
+    }
+  }
+
+  // Get all orders for a user
+  const fetchAllOrdersForUser = async() => {
+    try {
+      const response = await api.get(`/order/getAllOrdersByUserId/${userId}`); 
+      setOrders(response.data);
+    } catch (error) {
+      console.error('Error fetching order data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllOrdersForUser();
+  }, []);
+
 
   // Function to toggle the showAll state
   const handleShowAllClick = () => {
@@ -116,28 +118,30 @@ function Orders () {
               }}>
                 <TableCell>Order ID</TableCell>
                 <TableCell>Flight ID</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>No. of Passengers</TableCell>
+                <TableCell>Departure</TableCell>
+                <TableCell>Arrival</TableCell>
+                <TableCell>Price</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Passenger</TableCell>
                 <TableCell>Details</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {(bookingsData.slice(0, showAll ? bookingsData.length : 1).map((booking, index) =>
-              <TableRow key={booking.order_id}>
-                  <TableCell>{booking.order_id}</TableCell>
-                  <TableCell>{booking.flight_id}</TableCell>
-                  <TableCell>{booking.date}</TableCell>
-                  <TableCell>{booking.time}</TableCell>
-                  <TableCell>{booking.passengers}</TableCell>
+              {(orders.slice(0, showAll ? orders.length : 5).map((booking, index) =>
+              <TableRow key={booking.order.orderId}>
+                  <TableCell>{booking.order.orderId}</TableCell>
+                  <TableCell>{booking.flight.flightId}</TableCell>
+                  <TableCell>{booking.flight.flightDepartureDate} {booking.flight.flightDepartureTime}</TableCell>
+                  <TableCell>{booking.flight.flightArrivalDate} {booking.flight.flightArrivalTime}</TableCell>
+                  <TableCell>{booking.order.orderTotalPrice}</TableCell>
                   <TableCell>
                     <span className={getStatus(booking) === 'Completed' ? 'css-wu11c1' : 'css-rpg9ag'}>
                       {getStatus(booking)}
                     </span>
                   </TableCell>
+                  <TableCell>{booking.passenger.passengerFirstName}</TableCell>
                   <TableCell>
-                  <Link href={`/orders/${booking.id}`}>Details</Link>
+                  <Link href={`/orders/${booking.order.orderId}`}>Details</Link>
                   </TableCell>
               </TableRow>
               ))}

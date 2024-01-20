@@ -12,9 +12,6 @@ public class Flight {
     private double flightPrice;
     private int flightTotalSeats;
     private int flightTotalPassengers;
-    private double flightBusinessPrice;
-    private int flightTotalBusinessSeats; //newly created
-    private int flightTotalBusinessPassengers;
 
     
     public Flight() {
@@ -26,32 +23,26 @@ public class Flight {
         this.flightPrice = 100.00;
         this.flightTotalSeats = 50;
         this.flightTotalPassengers = 0;
-        this.flightBusinessPrice = 200.00;
-        this.flightTotalBusinessSeats = 20; //newly created
-        this.flightTotalBusinessPassengers = 0;
     }
 
     
-    // //without having flightId
-    // public Flight(Date flightDepartureDate, Time flightDepartureTime, Date flightArrivalDate,
-    //         Time flightArrivalTime, double flightPrice, int flightTotalSeats, int flightTotalPassengers,
-    //         double flightBusinessPrice, int flightTotalBusinessSeats, int flightTotalBusinessPassengers) {
-    //     this.flightDepartureDate = flightDepartureDate;
-    //     this.flightDepartureTime = flightDepartureTime;
-    //     this.flightArrivalDate = flightArrivalDate;
-    //     this.flightArrivalTime = flightArrivalTime;
-    //     this.flightPrice = flightPrice;
-    //     this.flightTotalSeats = flightTotalSeats;
-    //     this.flightTotalPassengers = flightTotalPassengers;
-    //     this.flightBusinessPrice = flightBusinessPrice;
-    //     this.flightTotalBusinessSeats = flightTotalBusinessSeats;
-    //     this.flightTotalBusinessPassengers = flightTotalBusinessPassengers;
-    // }
+    //without having flightId
+    public Flight(Date flightDepartureDate, Time flightDepartureTime, Date flightArrivalDate,
+            Time flightArrivalTime, double flightPrice, int flightTotalSeats, int flightTotalPassengers
+            ) {
+        this.flightDepartureDate = flightDepartureDate;
+        this.flightDepartureTime = flightDepartureTime;
+        this.flightArrivalDate = flightArrivalDate;
+        this.flightArrivalTime = flightArrivalTime;
+        this.flightPrice = flightPrice;
+        this.flightTotalSeats = flightTotalSeats;
+        this.flightTotalPassengers = flightTotalPassengers;
+    }
 
     //with flightId
     public Flight(int flightId, Date flightDepartureDate, Time flightDepartureTime, Date flightArrivalDate,
-            Time flightArrivalTime, double flightPrice, int flightTotalSeats, int flightTotalPassengers,
-            double flightBusinessPrice, int flightTotalBusinessSeats, int flightTotalBusinessPassengers) {
+            Time flightArrivalTime, double flightPrice, int flightTotalSeats, int flightTotalPassengers
+            ) {
         this.flightId = flightId;
         this.flightDepartureDate = flightDepartureDate;
         this.flightDepartureTime = flightDepartureTime;
@@ -60,9 +51,6 @@ public class Flight {
         this.flightPrice = flightPrice;
         this.flightTotalSeats = flightTotalSeats;
         this.flightTotalPassengers = flightTotalPassengers;
-        this.flightBusinessPrice = flightBusinessPrice;
-        this.flightTotalBusinessSeats = flightTotalBusinessSeats;
-        this.flightTotalBusinessPassengers = flightTotalBusinessPassengers;
     }
 
     // Getters and setters
@@ -96,26 +84,5 @@ public class Flight {
 
     public int getFlightTotalPassengers() {
         return flightTotalPassengers;
-    }
-
-    public double getFlightBusinessPrice() {
-        return flightBusinessPrice;
-    }
-
-    public int getFlightTotalBusinessSeats() {
-        return flightTotalBusinessSeats;
-    }
-
-    public int getFlightTotalBusinessPassengers() {
-        return flightTotalBusinessPassengers;
-    }
-
-    
+    }    
 }
-
-// flight_depart_date DATE NOT NULL,
-//     flight_departure_time TIME NOT NULL,
-//     flight_price DECIMAL(10, 2) DEFAULT 100.00,
-//     flight_total_seats INT DEFAULT 50,
-//     flight_total_passengers INT DEFAULT 0,
-    

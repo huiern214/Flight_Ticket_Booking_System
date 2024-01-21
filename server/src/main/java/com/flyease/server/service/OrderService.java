@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -230,6 +232,10 @@ public class OrderService {
         } catch (SQLException e) {
             System.out.println(e);
         }
+
+        // Sort by flight departure date and time in descending order
+        Collections.sort(orders, Comparator.comparing(o -> o.getFlight().getFlightDepartureDate()));
+        Collections.reverse(orders);
         return orders;
     }
 

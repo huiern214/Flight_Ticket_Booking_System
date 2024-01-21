@@ -130,25 +130,17 @@ function AddToWaitingList() {
                     </Box>
                     <Box mb={1} lineHeight={0}>
                         <Typography variant="caption" fontWeight="bold" color="rgb(123, 128, 154)">
-                            Name:&nbsp;&nbsp;&nbsp;
+                            Departure:&nbsp;&nbsp;&nbsp;
                             <Typography variant="caption" fontWeight="normal" color={"black"}>
-                                {flightInfo.flightDepartureDate}
-                            </Typography>
-                        </Typography>
-                    </Box>
-                    <Box mb={1} lineHeight={0}>
-                        <Typography variant="caption" fontWeight="bold" color="rgb(123, 128, 154)">
-                            Departure Time:&nbsp;&nbsp;&nbsp;
-                            <Typography variant="caption" fontWeight="normal" color={"black"}>
-                                {flightInfo.flightDepartureTime}
+                            {flightInfo.flightDepartureDate} {flightInfo.flightDepartureTime}
                             </Typography>
                         </Typography>    
                     </Box>               
                     <Box mb={1} lineHeight={0}>
                         <Typography variant="caption" fontWeight="bold" color="rgb(123, 128, 154)">
-                            Duration:&nbsp;&nbsp;&nbsp;
+                            Arrival:&nbsp;&nbsp;&nbsp;
                             <Typography variant="caption" fontWeight="normal" color={"black"}>
-                                1 hour
+                            {flightInfo.flightArrivalDate} {flightInfo.flightArrivalTime}
                             </Typography>
                         </Typography>    
                     </Box>               

@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -26,9 +28,12 @@ public class FlightService {
     // [1] get all the flights' information
     public List<Flight> getAllFlights() {
         List<Flight> flights = new ArrayList<>();
-        String query = "SELECT * FROM Flight";
+        // get all the flights after the current time
+        String query = "SELECT * FROM Flight WHERE flight_departure_date >= ?";
+
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setDate(1, new Date(System.currentTimeMillis()));
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -46,6 +51,7 @@ public class FlightService {
         } catch (SQLException e) {
             System.out.println(e);
         }
+        Collections.sort(flights, Comparator.comparing(Flight::getFlightDepartureDate));
         return flights;
     }
 
@@ -72,6 +78,7 @@ public class FlightService {
         } catch (SQLException e) {
             System.out.println(e);
         }
+        Collections.sort(flights, Comparator.comparing(Flight::getFlightDepartureTime));
         return flights;
     }
 
@@ -82,15 +89,19 @@ public class FlightService {
         // SELECT * FROM Flight WHERE flight_depart_date >= ? and flight_depart_date <= ?
         String query = "SELECT * FROM Flight WHERE flight_departure_date >= ? and flight_departure_date <=?";
 
-        //DAO layer - SQL and result set
         // What if date1 > date2, then execute --> get empty result set
         // How to ensure date1 < date2? --> Handle this logic at Service layer
+        // if date1 < current date, then date1 = current date
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            if (Date.valueOf(date1).getTime() < System.currentTimeMillis()) {
+                date1 = new Date(System.currentTimeMillis()).toString();
+            }
+
             if (Date.valueOf(date1).getTime() >= Date.valueOf(date2).getTime()) {
-                statement.setDate(1, Date.valueOf(date2));
+                statement.setDate(1, Date.valueOf(date2).getTime() < System.currentTimeMillis() ? new Date(System.currentTimeMillis()) : Date.valueOf(date2));
                 statement.setDate(2, Date.valueOf(date1));
             } else {
-                statement.setDate(1, Date.valueOf(date1));
+                statement.setDate(1, Date.valueOf(date1).getTime() < System.currentTimeMillis() ? new Date(System.currentTimeMillis()) : Date.valueOf(date1));
                 statement.setDate(2, Date.valueOf(date2));
             }
             ResultSet resultSet = statement.executeQuery();
@@ -113,6 +124,7 @@ public class FlightService {
         } catch (SQLException e) {
             System.out.println(e);
         }
+        Collections.sort(flights, Comparator.comparing(Flight::getFlightDepartureDate));
         return flights;
     }
 
@@ -184,7 +196,7 @@ public class FlightService {
             statement.setDate(1, flight_departure_date);
             statement.setTime(2, flight_departure_time);
             statement.setDate(3, flight_arrival_date);
-            statement.setTime(4, flight_departure_time);
+            statement.setTime(4, flight_arrival_time);
             statement.setDouble(5, flight_price);
             statement.setInt(6, flight_total_seats);
             statement.setInt(7, flight_id);

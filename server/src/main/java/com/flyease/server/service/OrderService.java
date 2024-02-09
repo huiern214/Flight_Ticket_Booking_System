@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.flyease.server.model.Flight;
 import com.flyease.server.model.Order;
 import com.flyease.server.model.OrderDetails;
+import com.flyease.server.model.OrderDetailsLinkedList;
 import com.flyease.server.model.Passenger;
 import com.flyease.server.model.WaitingListQueue;
 import com.flyease.server.model.DTO.CreateOrderInput;
@@ -215,7 +213,7 @@ public class OrderService {
     // 1. get all the orders' id from Order table
     // 2. get all the orders' information based on the order id using getOrderDetails()
     public List<OrderDetails> getAllOrdersByUserId(int userId) throws SQLException {
-        List<OrderDetails> orders = new ArrayList<>();
+        OrderDetailsLinkedList orders = new OrderDetailsLinkedList();
         String query = "SELECT order_id FROM `Order` WHERE user_id = ? AND order_status = 'confirmed'";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -226,17 +224,18 @@ public class OrderService {
                 int orderId = resultSet.getInt("order_id");
                 OrderDetails orderDetails = getOrderDetails(orderId);
                 if (orderDetails != null) {
-                    orders.add(orderDetails);
+                    orders.insert(orderDetails);
+                    System.out.println(orderDetails.getOrder().getOrderId());
                 }
             }
         } catch (SQLException e) {
             System.out.println(e);
         }
 
+        orders.printList();
+
         // Sort by flight departure date and time in descending order
-        Collections.sort(orders, Comparator.comparing(o -> o.getFlight().getFlightDepartureDate()));
-        Collections.reverse(orders);
-        return orders;
+        return orders.getOrderDetailsListByFlightDateTimeOrder();
     }
 
     // [4b] get all the waiting lists' details based on the user id

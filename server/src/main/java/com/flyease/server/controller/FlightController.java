@@ -80,7 +80,7 @@ public class FlightController {
     }
     // Example output:
     // [
-    //     DATA: {
+    //     {
     //         "flightId": 1,
     //         "flightDepartureDate": "2024-12-25",
     //         "flightDepartureTime": "12:00:00",

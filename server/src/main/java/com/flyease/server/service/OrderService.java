@@ -232,8 +232,6 @@ public class OrderService {
             System.out.println(e);
         }
 
-        orders.printList();
-
         // Sort by flight departure date and time in descending order
         return orders.getOrderDetailsListByFlightDateTimeOrder();
     }

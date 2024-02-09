@@ -69,14 +69,6 @@ public class OrderDetailsLinkedList {
         }
         return orderDetailsList;
     }
-
-    public void printList() {
-        Node current = head;
-        while (current != null) {
-            System.out.println(current.getData().getFlight().getFlightArrivalDate());
-            current = current.getNext();
-        }
-    }
 }
 
 // Node class to represent each node in the linked list
@@ -113,10 +105,5 @@ class Node {
 
     public void setNext(Node next) {
         this.next = next;
-    }
-
-    @Override
-    public String toString() {
-        return data.toString();
     }
 }
